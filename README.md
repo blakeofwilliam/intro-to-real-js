@@ -32,7 +32,7 @@ npm is the "node package manager". It is a node.js provided command line tool. T
 #### npm init
 The easiest way to create the `package.json` is in the command line from your project directory.
 
-This is done pretty easily in Visual Studio Code as long as you have Jun Han's `Terminal` extension installed.
+This is done pretty easily in Visual Studio Code as long as you have [Jun Han's Terminal extension](https://marketplace.visualstudio.com/items?itemName=formulahendry.terminal) installed.
 
 Open the terminal in Visual Studio Code and run the following code:
 
