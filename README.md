@@ -43,31 +43,31 @@ npm init
 
 After you run the `npm init` command, you will be given a set of prompts for information about the npm project you're initializing.
 
-**package name** 
+**package name**: 
 The name of your npm project. This can be any string without spaces. The value displayed in parentheses is the suggested value from npm. If you simply hit `enter` without providing your own value, then this value will be used instead.
 
-**version**
+**version**:
 The version of your project. Typically the suggestion is suitable for a new project, and this can be manually updated in future revisions of your application in the resulting `package.json` file. For now, the default of `1.0.0` is completely fine.
 
-**description**
+**description**:
 This is an optional description of what your project is, but is by no means necessary in this case. However, feel free to provide a value just explaining what it is you're currently working on if you like.
 
-**entry point**
+**entry point**:
 This is not necessary for our current example, so you can just hit `enter` on this one to use the suggestion.
 
-**test command**
+**test command**:
 This is not necessary for our current example, so you can just hit `enter` on this one to use the suggestion.
 
-**git repository**
+**git repository**:
 This is not necessary for our current example, so you can just hit `enter` on this one to use the suggestion.
 
-**keywords**
+**keywords**:
 This is not necessary for our current example, so you can just hit `enter` on this one to use the suggestion.
 
-**author**
+**author**:
 Your name & email in the following format: `Full Name <email@example.com>`.
 
-**license**
+**license**:
 Given that node.js and npm are central parts of the open-source community, this is just an opportunity to flag the type of usage license you'd like to enforce on your project. In this case, you can type `UNLICENSED`.
 
 After providing these values, you'll be shown the JSON configuration that is about to be written to your `package.json` file. You can hit `enter` to approve this.
