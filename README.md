@@ -6,7 +6,7 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [node.js overview](#nodejs-overview)
     - [npm overview](#npm-overview)
     - [The basics of npm](#the-basics-of-npm)
-- [Using npm packages in your code](#using-npm-packages-in-your-code)
+- [Using open-source npm packages in your code](#using-open-source-npm-packages-in-your-code)
     - [The require method](#the-require-method)
     - [Example usage](#example-usage)
 - [Express](#express)
@@ -72,10 +72,59 @@ Given that node.js and npm are central parts of the open-source community, this 
 
 After providing these values, you'll be shown the JSON configuration that is about to be written to your `package.json` file. You can hit `enter` to approve this.
 
-## Using npm packages in your code
+## Using open-source npm packages in your code
+As mentioned before, the real benefit of npm in the case of Javascript development is that you can simply manage open-sourced projects and resources that other people have developed. There are two ways to include these dependencies in your project: with and without saving the dependency to your `package.json`. I suggest always saving your dependecies to your `package.json`, but I'll demonstrate both.
+
+### Installing dependencies and saving to package.json
+The basic command to install a package dependency is `npm install package-name`. This is referencing the name of the package as published on the [npm registry](https://www.npmjs.com/). The addition of the `--save` flag to this command will ensure that this dependency is stored in our `package.json`.
+
+### Installing express
+Using this knowledge, we'll be installing a single dependency for this example project: `express`. We'll get to what this package allows us to do at a later point in time, but for now, simply run `npm install express --save` in the Visual Studio Code terminal.
+
+After running this command, you should see a new directory in your project folder called `node_modules`. This is the location that npm installs project dependencies. If that's there, you've successfully installed your first dependency!
 
 ### The require method
+Before we actually use this new dependency, it's important to understand _how_ these dependencies are included in your project code.
 
-### Example usage
+As mentioned earlier on, node.js exposes to Javascript some previously unavailable functionality like access to the file system. This is actually incredibly useful in using our npm dependencies. There is a super complicated manner in which we could use this filesystem access to look into the `node_modules` directory and file the `express` files we need in our project and eventually – after dozens of lines of code – we'd have access to the functions and classes included there.
+
+However, node.js has given us a much easier way to do this and it's a simple method called `require`. The require method takes a single argument. In this example, that argument we'll provide is simply the name of the dependency your want to use in your project. 
+
+That will look like this: `require('express');`. The output of this method is the dependency's exported Javascript code. That may not be completely clear at this point, but it will be very soon, I promise!
+
+### Using our new dependency
+In your project folder, create a new file called `index.js`.
+
+In this file, add the following code:
+
+```javascript
+// require the express package in this file 
+// and store it in a variable for later use
+const express = require('express');
+// create a new instance of `express`
+const app = express();
+// give our app some basic rules about what to 
+// do with a web request
+app.get('/', (request, response) => {
+    response.send('I just configured a webserver!');
+});
+
+// tell our app what port to listen for requests on
+app.listen(3000, () => {
+    console.log('App is listening on localhost:3000...');
+});
+```
+
+We'll dive into what all of this code does soon, but for now, bask in the glory of the fact that you just configured a web server in Javascript!
+
+### Running your web server
+In order to see this thing in action, open the Visual Studio Code terminal, and run the following command:
+
+```bash
+node index.js
+```
+
+You should see a message in the terminal saying `App is listening on localhost:3000...`. If you see this, your webserver is running! You can visit [http://localhost:3000](http://localhost:3000) in your web browser and see your work in action.
 
 ## Express
+Comming soon...
