@@ -167,7 +167,7 @@ Using the same example of the web browser, when you type in `google.com` in your
 One important thing to note is that an HTTP Server is not restricted to returning HTML content. In fact, an HTTP Server is also responsible for returning images, Javascript files, CSS files, etc. In fact when the HTML for a web page is sent to a web browser, every `<script>`, `<link>`, and `<img>` tag also results in a separate HTTP GET request to get the content for those files as well. 
 
 ### Request methods
-There is a pretty long list of what types of "questions" an HTTP Client can as an HTTP Server. The way that the HTTP Client tells the HTTP Server what type of question it's asking is through something called an [HTTP Request Method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods). We've briefly covered the `GET` request method, but a more detailed list of the most commonly used request methods is as follows.
+There is a pretty long list of what types of "questions" an HTTP Client can ask an HTTP Server. The way that the HTTP Client tells the HTTP Server what type of question it's asking is through something called an [HTTP Request Method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods). We've briefly covered the `GET` request method, but a more detailed list of the most commonly used request methods is as follows.
 
 **GET**: A request for the content/data at a specific web address. The HTTP Client should only _**retrieve**_ content when it receives a GET request
 
