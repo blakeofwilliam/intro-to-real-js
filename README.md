@@ -10,6 +10,13 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [The require method](#the-require-method)
     - [Example usage](#example-usage)
 - [Express](#express)
+    - [HTTP Server overview](#http-server-overview)
+    - [The Client/Server relationship](#the-clientserver-relationship)
+    - [Request Methods](#request-methods)
+    - [Status Codes](#status-codes)
+    - [How this all applies to Express](#how-this-all-applies-to-express)
+    - [The breakdown](#the-breakdown)
+- [Extending our application](#extending-our-application)
 
 ## Using npm for dependency management
 node.js and npm go hand in hand with frontend, backend, and full-stack Javascript development. Nowadays, they're considered default knowledge requirements in most real-world Javascript projects. In this section, we'll review exactly what node.js and npm are and how they're used to build robust websites without having to build everything from scrath. This is done by utilizing the open-source community and its adoption of node.js and npm as a shared standard for package development, production, sharing, and inclusion in any given project.
@@ -22,7 +29,7 @@ In order to fully understand this, there's a little bit of foundational Javascri
 #### Enter node.js
 The concept behind node.js was to take this highly perfomant scripting language, and give it a wrapper (that is not the web browser) to execute Javascript without requiring a browser while also providing access to the lower-level machine that is typically reserved for more traditional server-side languages.
 
-This allowed Javascript to access the file server, to run an HTTP server to accept its own web requests, and to perform command-line triggered tasks locally on the machine. For example, you could create a single project that houses an HTTP server to accept requests at all applicable routes, has some command-line executed Javascript tasks to convert your LESS to CSS... _**all with just Javascript**_!!!
+This allowed Javascript to access the file system, to run an HTTP server to accept its own web requests, and to perform command-line triggered tasks locally on the machine. For example, you could create a single project that houses an HTTP server to accept requests at all applicable routes, has some command-line executed Javascript tasks to convert your LESS to CSS... _**all with just Javascript**_!!!
 
 This is just a high-level explanation of what node.js is used for, but it only scratches the surface. In a "quick start" scenario, the real power of node.js comes with its counterpart [npm](#npm-overview).
 
@@ -86,7 +93,7 @@ After running this command, you should see a new directory in your project folde
 ### The require method
 Before we actually use this new dependency, it's important to understand _how_ these dependencies are included in your project code.
 
-As mentioned earlier on, node.js exposes to Javascript some previously unavailable functionality like access to the file system. This is actually incredibly useful in using our npm dependencies. There is a super complicated manner in which we could use this filesystem access to look into the `node_modules` directory and file the `express` files we need in our project and eventually – after dozens of lines of code – we'd have access to the functions and classes included there.
+As mentioned earlier on, node.js exposes to Javascript some previously unavailable functionality like access to the file system. This is actually incredibly useful in using our npm dependencies. There is a super complicated manner in which we could use this filesystem access to look into the `node_modules` directory and locate the `express` files we need in our project and eventually – after dozens of lines of code – we'd have access to the functions and classes included there.
 
 However, node.js has given us a much easier way to do this and it's a simple method called `require`. The require method takes a single argument. In this example, that argument we'll provide is simply the name of the dependency your want to use in your project. 
 
@@ -127,4 +134,84 @@ node index.js
 You should see a message in the terminal saying `App is listening on localhost:3000...`. If you see this, your webserver is running! You can visit [http://localhost:3000](http://localhost:3000) in your web browser and see your work in action.
 
 ## Express
-Comming soon...
+According to the Express website, it is a "fast, unopinionated, minimalist web framework for Node.js". All this means is that the creators of Express have developed a framework that houses all of the resources you'd need to build and serve your own web application. This includes – but is not limited to – a lot of the functionality traditionally handled by a specific HTTP Server like [Apache](https://httpd.apache.org/) or [Nginx](https://www.nginx.com/). The good news is: learning how to use express doesn't require any prerequisite knowlege of how these HTTP Servers typically work. However, it's good to lay down some foundational knowledge.
+
+### HTTP Server overview
+HTTP is the abbreviation of "HyperText Transfer Protocol". For the sake of our upcoming examples, it's not completely necessary to fully understand what a "protocol" is other than that it's a sort of a set of guidelines around how two separate pieces of software communicate with each other. The HTTP Server is the implementation of the "HyperText Transfer" protocol in a piece of software. 
+
+You may recognize the term "HyperText" from HTML (HyperText Markup Language). With that little bit of background, it's a short hop to deducing that HTTP is the implementation of a protocol that allows a web request to return website content. The protocol specifies how the information must be requested and how the responses are formed, so we have two important actors here: the HTTP Client (well known as Browser) and the HTTP Server.
+
+Some common "HTTP Clients" are Firefox, Chrome, and Safari. There is also an extension for Google Chrome that we'll be using in later exercises called [Postman](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop) and an associated companion extension called [Postman Interceptor](https://chrome.google.com/webstore/detail/postman-interceptor/aicmkgpgakddgnaphhhpliifpcfhicfo). Together, these extensions act as a free-standing HTTP Client, so you can send an HTTP request and view its response without going to a URL in a web browser directly.
+
+### The Client/Server Relationship
+In short terms, every time that you open your browser (HTTP Client) and you write some address like: [http://google.com](http://google.com) and hit Enter, the browser is connecting to the HTTP server behind http://google.com, the server will interpret the main request and then provide the appropriate response back your HTTP Client (web browser). The HTTP Client is then responsible for doing something with this response.
+
+This relationship can be boiled down pretty plainly as what I like to call a "question and answer system". There are number of "questions" that an HTTP Client can ask an HTTP Server, but the most common you see when browsing the web is: "Is there any content available at this web address?" This is known as a `GET` request.
+
+Using the same example of the web browser, when you type in `google.com` in your address bar and hit `enter`, a couple of things take place. 
+
+- The web browser (HTTP Client) sends out a question: "Is there any content available at the web address `google.com`?" in the for of a HTTP `GET` request
+- Some voodoo happens called a `DNS lookup` (we'll get there eventually) that basically is just a way for the internet to figure out what server has the listening HTTP Server for a given website
+- This "question" (HTTP GET Request) is then delivered to the HTTP Server in charge of `google.com`
+- Once this request reaches the HTTP Server, the HTTP Server follows a set of rules (defined by Google's engineering team) for what content to deliver back when this web address is requested
+- The HTTP Server sends this content back to the HTTP Client
+- In the case of a web browser, this content is then parsed and rendered as the web page that you see
+
+#### Important distinction
+One important thing to note is that an HTTP Server is not restricted to returning HTML content. In fact, an HTTP Server is also responsible for returning images, Javascript files, CSS files, etc. In fact when the HTML for a web page is sent to a web browser, every `<script>`, `<link>`, and `<img>` tag also results in a separate HTTP GET request to get the content for those files as well. 
+
+### Request methods
+There is a pretty long list of what types of "questions" an HTTP Client can as an HTTP Server. The way that the HTTP Client tells the HTTP Server what type of question it's asking is through something called an [HTTP Request Method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods). We've briefly covered the `GET` request method, but a more detailed list of the most commonly used request methods is as follows.
+
+**GET**: A request for the content/data at a specific web address. The HTTP Client should only _**retrieve**_ content when it receives a GET request
+
+**POST**: A request to submit some data to the HTTP Server; this is most commonly used in scenarios just as form submissions
+
+**PUT**: A request for the HTTP Server to update some existing data; this is also used in form submission, but when editing (rather than creating) data
+
+**DELETE**: A request for the HTTP Server to delete some existing data
+
+### Status codes
+So, how does an HTTP Client know the answer to the question it asks?
+
+The HTTP protocol includes as part of its rules the concept of [HTTP Status Codes](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html). These status codes are a set of pre-determined, short form "answers" to the questions an HTTP Client might ask. This is the way that the HTTP Server tells the HTTP Client whether the processing of the request was successful or not, whether the file they're looking for exists, even if the user doesn't have the right permissions to view a specific file. These status codes are 3 digit numbers and are categorized by the number in the `hundreds` place of the status code.
+
+They are categorized like so:
+
+**1XX**: Informational; not really used in web development at all
+
+**2XX**: Successful; the web address had some content, and it's was successfully delivered
+
+**3XX**: Redirection; the HTTP Server has determined that the content you're looking for is served at another web address (type in `chrome.google.com` and look at the address after the web page renders...)
+
+**4XX**: Client Error; the HTTP Server has determined that there's an error in the request sent by the HTTP Client (most commonly seen example is the `404: Not Found` status code, which means that content could not be found at the requested web address)
+
+**5XX**: Server Error; the HTTP Server encountered an error when processing the request
+
+### How this all applies to Express
+Since Express is a "web framework", it takes responsibility for some of the tasks traditionally handled by a dedicated HTTP Server. It's finally time to step through what our Express example from earlier is actually doing... but just a portion of it.
+
+```javascript
+const app = express();
+
+app.get('/', (request, response) => {
+    response.send('I just configured a web server!');
+});
+```
+
+### The breakdown
+In this code snippet, we first initialize Express and store the result in a variable called `app`.
+
+Immediately after that, we start the process of configuring the HTTP Server. We use a method called `get` that is made available by Express. This method represents a `request method`. 
+
+The method takes two arguments: the relative path of the request you're responding to and a callback method with the logic of how to respond.
+
+Express passes to this callback method two arguments: the original request object and a response object with a number of helper methods to send the response back to the HTTP Client.
+
+We use this `response` object's `send` method to send some text back to the HTTP Client.
+
+_And **that's** how we configured our own web server!!!_
+
+## Extending our application
+Coming soon...
+
