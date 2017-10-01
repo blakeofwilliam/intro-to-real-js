@@ -208,7 +208,7 @@ The method takes two arguments: the relative path of the request you're respondi
 
 Express passes to this callback method two arguments: the original request object and a response object with a number of helper methods to send the response back to the HTTP Client.
 
-We use this `response` object's `send` method to send some text back to the HTTP Client.
+We use this `response` object's `send` method to send some text back to the HTTP Client. The `send` method implies a `200` status code, which tells the HTTP Client everything was successful.
 
 _And **that's** how we configured our own web server!!!_
 
