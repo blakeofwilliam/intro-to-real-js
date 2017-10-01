@@ -213,5 +213,70 @@ We use this `response` object's `send` method to send some text back to the HTTP
 _And **that's** how we configured our own web server!!!_
 
 ## Extending our application
-Coming soon...
+So, let's stop messing with this plain text stuff, and return a web page!
 
+### More project setup
+Before we go too far down this rabbit hole, let's do some setup to make sure our project is organized. Firstly, in your project folder, create a directory called `src`. This will be the source code for our website. All of the HTML, images, CSS, and Javascript that will run in the browser will live here.
+
+With that said, we should probably create folders for each of those as well. Inside of the `src` folder, create four more folders named `css`, `img`, `js`, and `views` respectively.
+
+**css**: This will house our CSS files
+
+**img**: This will house our images
+
+**js**: This will house our site Javascript
+
+**views**: This will house our HTML
+
+### Creating our main HTML
+Inside of the `src/views` folder create a file and name it `index.html`. This is going to be the HTML for our website's main page.
+
+A simple shortcut to stub out an HTML page in VSCode is to open your HTML file, type `html:5` and hit the `tab` key.
+
+This should give you something that looks like this:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html>
+```
+
+#### Some basic starter content
+We're not going to go too far with this file just yet. For now, we'll add the following to the `<body>` of the HTML file.
+
+```html
+<h1>I'm serving HTML with Express!</h1>
+```
+
+Save the file, and we'll move on to wire this thing up!
+
+### Updating our main route
+For this portion, we need to re-visit our `index.js` file. We already have a functioning callback for a `GET` request on our website. However, it's sending plain text. What we want to do is send our new HTML file instead of plain text. In the same way that Express made the `response.send()` method available to us to send plain text, we can use the `response.sendFile()` method to send a file.
+
+Replace this line:
+
+```javascript
+response.send('I just configured a webserver!');
+```
+
+With this:
+
+```javascript
+response.sendFile(__dirname + '/src/views/index.html');
+```
+
+Save this file and restart your node process. You can do this by hitting `ctrl + c` in the terminal, then re-running `node index.js`.
+
+Once this process has started up again, and you see the `App is listening on localhost:3000...` message, you can visit [http://localhost:3000](http://localhost:3000) in your browser, and you should see your new HTML in action!
+
+## Adding more routes
+Coming soon...

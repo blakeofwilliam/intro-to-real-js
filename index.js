@@ -6,7 +6,7 @@ const app = express();
 // give our app some basic rules about what to 
 // do with a web request
 app.get('/', (request, response) => {
-    response.send('I just configured a webserver!');
+    response.sendFile(__dirname + '/src/views/index.html');
 });
 
 // tell our app what port to listen for requests on
