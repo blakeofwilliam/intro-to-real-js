@@ -2,29 +2,31 @@
 This is a basic project to demonstrate a more common real-world workflow for Javascript development on both the client and server side.
 
 ## Table of contents
-- [Using npm for dependencies](#using-npm-for-dependency-management)
+- [Part 1: Using npm for dependencies](#part-1-using-npm-for-dependency-management)
     - [node.js overview](#nodejs-overview)
     - [npm overview](#npm-overview)
     - [The basics of npm](#the-basics-of-npm)
-- [Using open-source npm packages in your code](#using-open-source-npm-packages-in-your-code)
+- [Part 2: Using open-source npm packages in your code](#part-2-using-open-source-npm-packages-in-your-code)
     - [The require method](#the-require-method)
     - [Example usage](#example-usage)
-- [Express](#express)
+- [Part 3: Express](#part-3-express)
     - [HTTP Server overview](#http-server-overview)
     - [The Client/Server relationship](#the-clientserver-relationship)
     - [Request Methods](#request-methods)
     - [Status Codes](#status-codes)
     - [How this all applies to Express](#how-this-all-applies-to-express)
     - [The breakdown](#the-breakdown)
-- [Extending our application](#extending-our-application)
+- [Part 4: Extending our application](#part-4-extending-our-application)
     - [More project setup](#more-project-setup)
     - [Creating our main HTML](#creating-our-main-html)
     - [Some basic starter content](#some-basic-starter-content)
     - [Updating our main route](#updating-our-main-route)
     - [Background on __dirname](#background-on-dirname)
-- [Adding more routes](#adding-more-routes)
+- [Part 5: Defining our application](#part-5-defining-our-application)
 
-## Using npm for dependency management
+---
+
+## Part 1: Using npm for dependency management
 node.js and npm go hand in hand with frontend, backend, and full-stack Javascript development. Nowadays, they're considered default knowledge requirements in most real-world Javascript projects. In this section, we'll review exactly what node.js and npm are and how they're used to build robust websites without having to build everything from scrath. This is done by utilizing the open-source community and its adoption of node.js and npm as a shared standard for package development, production, sharing, and inclusion in any given project.
 
 ### node.js overview
@@ -85,7 +87,9 @@ Given that node.js and npm are central parts of the open-source community, this 
 
 After providing these values, you'll be shown the JSON configuration that is about to be written to your `package.json` file. You can hit `enter` to approve this.
 
-## Using open-source npm packages in your code
+--- 
+
+## Part 2: Using open-source npm packages in your code
 As mentioned before, the real benefit of npm in the case of Javascript development is that you can simply manage open-sourced projects and resources that other people have developed. There are two ways to include these dependencies in your project: with and without saving the dependency to your `package.json`. I suggest always saving your dependecies to your `package.json`, but I'll demonstrate both.
 
 ### Installing dependencies and saving to package.json
@@ -139,7 +143,9 @@ node index.js
 
 You should see a message in the terminal saying `App is listening on localhost:3000...`. If you see this, your webserver is running! You can visit [http://localhost:3000](http://localhost:3000) in your web browser and see your work in action.
 
-## Express
+--- 
+
+## Part 3: Express
 According to the Express website, it is a "fast, unopinionated, minimalist web framework for Node.js". All this means is that the creators of Express have developed a framework that houses all of the resources you'd need to build and serve your own web application. This includes – but is not limited to – a lot of the functionality traditionally handled by a specific HTTP Server like [Apache](https://httpd.apache.org/) or [Nginx](https://www.nginx.com/). The good news is: learning how to use express doesn't require any prerequisite knowlege of how these HTTP Servers typically work. However, it's good to lay down some foundational knowledge.
 
 ### HTTP Server overview
@@ -218,7 +224,9 @@ We use this `response` object's `send` method to send some text back to the HTTP
 
 _And **that's** how we configured our own web server!!!_
 
-## Extending our application
+--- 
+
+## Part 4: Extending our application
 So, let's stop messing with this plain text stuff, and return a web page!
 
 ### More project setup
@@ -291,5 +299,7 @@ As I'm sure you've noticed, we're providing a concatenated string as our only ar
 
 Using this variable, we are able to tell `sendFile()` where to look for the file I want to send as my response. This is very useful in larger applications especially, but for now it's just an extra tidbit of information.
 
-## Adding more routes
+---
+
+## Part 5: Defining our application
 Coming soon...
