@@ -17,6 +17,11 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [How this all applies to Express](#how-this-all-applies-to-express)
     - [The breakdown](#the-breakdown)
 - [Extending our application](#extending-our-application)
+    - [More project setup](#more-project-setup)
+    - [Creating our main HTML](#creating-our-main-html)
+    - [Some basic starter content](#some-basic-starter-content)
+    - [Updating our main route](#updating-our-main-route)
+- [Adding more routes](#adding-more-routes)
 
 ## Using npm for dependency management
 node.js and npm go hand in hand with frontend, backend, and full-stack Javascript development. Nowadays, they're considered default knowledge requirements in most real-world Javascript projects. In this section, we'll review exactly what node.js and npm are and how they're used to build robust websites without having to build everything from scrath. This is done by utilizing the open-source community and its adoption of node.js and npm as a shared standard for package development, production, sharing, and inclusion in any given project.
