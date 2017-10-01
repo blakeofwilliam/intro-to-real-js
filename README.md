@@ -22,6 +22,7 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Some basic starter content](#some-basic-starter-content)
     - [Updating our main route](#updating-our-main-route)
     - [Background on __dirname](#background-on-dirname)
+    - [Additional reading](#additional-reading)
 - [Part 5: Defining our application](#part-5-defining-our-application)
 
 ---
@@ -225,6 +226,14 @@ We use this `response` object's `send` method to send some text back to the HTTP
 _And **that's** how we configured our own web server!!!_
 
 --- 
+
+### Additional reading
+
+[Express:Request](http://expressjs.com/en/4x/api.html#reqhttp://expressjs.com/en/4x/api.html#req)
+
+[Express:Response](http://expressjs.com/en/4x/api.html#reshttp://expressjs.com/en/4x/api.html#res)
+
+[Basic Routing in Express](http://expressjs.com/en/starter/basic-routing.htmlhttp://expressjs.com/en/starter/basic-routing.html)
 
 ## Part 4: Extending our application
 So, let's stop messing with this plain text stuff, and return a web page!
