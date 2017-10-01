@@ -171,7 +171,7 @@ There is a pretty long list of what types of "questions" an HTTP Client can as a
 
 **GET**: A request for the content/data at a specific web address. The HTTP Client should only _**retrieve**_ content when it receives a GET request
 
-**POST**: A request to submit some data to the HTTP Server; this is most commonly used in scenarios just as form submissions
+**POST**: A request to submit some data to the HTTP Server; this is most commonly used in scenarios such as form submissions
 
 **PUT**: A request for the HTTP Server to update some existing data; this is also used in form submission, but when editing (rather than creating) data
 
