@@ -21,6 +21,7 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Creating our main HTML](#creating-our-main-html)
     - [Some basic starter content](#some-basic-starter-content)
     - [Updating our main route](#updating-our-main-route)
+    - [Background on __dirname](#background-on-dirname)
 - [Adding more routes](#adding-more-routes)
 
 ## Using npm for dependency management
@@ -282,6 +283,13 @@ response.sendFile(__dirname + '/src/views/index.html');
 Save this file and restart your node process. You can do this by hitting `ctrl + c` in the terminal, then re-running `node index.js`.
 
 Once this process has started up again, and you see the `App is listening on localhost:3000...` message, you can visit [http://localhost:3000](http://localhost:3000) in your browser, and you should see your new HTML in action!
+
+#### Background on __dirname
+As I'm sure you've noticed, we're providing a concatenated string as our only argument to `response.sendFile()`. But there's something weird about this string: it's using a random variable called `__dirname`. We never created it, so what is it?
+
+**__dirname** is a variable that Node.js makes available to our application to reference the directory on the file system that the current Javascript file live in. So, when we run `node index.js`, a variable is created in the background with the value of `/the/path/to/your/project/folder`. In my case, this happens to be `/Users/blakewilliams/development/intro-to-real-js`, but yours will most certainly be completely different.
+
+Using this variable, we are able to tell `sendFile()` where to look for the file I want to send as my response. This is very useful in larger applications especially, but for now it's just an extra tidbit of information.
 
 ## Adding more routes
 Coming soon...
