@@ -24,6 +24,9 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Background on __dirname](#background-on-dirname)
     - [Additional reading](#additional-reading)
 - [Part 5: Defining our application](#part-5-defining-our-application)
+    - [Application overview](#application-overview)
+    - [The tech stack](#the-tech-stack)
+- [Part 6: More application prerequisites](#part-6-more-application-prerequisites)
 
 ---
 
@@ -311,4 +314,33 @@ Using this variable, we are able to tell `sendFile()` where to look for the file
 ---
 
 ## Part 5: Defining our application
+Now that we've got some basic prerequisites out of the way for our web app, we can start to discuss what we're going to build.
+
+### Application overview
+We're going to build a basic forum. This will allow for users to create an account, view existing threads in the forum, add comments, and create their own threads. This may sound like a lot but it can be broken down pretty simply.
+
+Here's what we'll need to accomplish all of this:
+
+- Four basic pages
+    - A home page with login and sign up forms
+    - A thread list page that will list out all active threads in the forum
+    - A thread detail page that will list all comments in a specific thread and allow users to add comments to the thread
+    - A "new thread" page with a form for creating a new thread
+- An HTTP Server – which we've already started – that defines the rules for all of our website's routes (including the routes we'll use to fetch thread and user info)
+- A database to store users, passwords, threads, and comments (we will cover this in great detail later, so don't worry if this sounds intimidating)
+
+### The tech stack
+**basic pages**: we'll be using basic HTML, CSS, and Javascript.
+
+**HTTP Server**: as you may already know, we'll be using Node.js and Express
+
+**database**: we'll be using a technology we've yet to discuss called [MongoDB](https://www.mongodb.com/)
+
+**orchestration**: we'll be using a tool called [Docker](https://www.docker.com/) for something called "app orchestration". This will allow us to easily organize how the different parts of our application talk to each other.
+
+_Don't worry too much about the specifics of how we'll be using these technologies to accomplish the task at hand or – even what they are – just yet. The implementation of each feature and technology will be covered pretty extensively... **starting with the next section.**_
+
+---
+
+## Part 6: More application prerequisites
 Coming soon...
