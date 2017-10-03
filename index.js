@@ -10,7 +10,7 @@ app.set('view engine', 'twig');
 // give our app some basic rules about what to 
 // do with a web request
 app.get('/', (request, response) => {
-    response.render('index');
+    response.render('pages/home');
 });
 
 // tell our app what port to listen for requests on

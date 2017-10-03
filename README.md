@@ -32,6 +32,11 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Twig loops](#twig-loops)
     - [Twig extends](#twig-extends)
 - [Part 8: Creating our base.twig file](#part-8-creating-our-basetwig-file)    
+    - [Defining extendable blocks](#defining-extendable-blocks)
+    - [Extending our new base.twig file](#extending-our-new-basetwig-file)
+    - [Rendering our new home page](#rendering-our-new-home-page)
+    - [Checking our work](#checking-our-work)
+- [Part 9: Adding more routes](#part-9-adding-more-routes)
 
 ---
 
@@ -500,4 +505,99 @@ The **_FUTURE_**!!!
 ---
 
 ## Part 8: Creating our base.twig file
+From the previous example, you might be able to guess that we already have most of what we'd need for our `base.twig` file. It happens to be in the `index.twig` file we created earlier. All we need to do is rename the file, and create our `block` placeholders for content that will be defined by other templates that extend our `base.twig` file.
+
+The renaming is the easy part. Just right click on `src/views/index.twig` and choose `Rename`. Change the name of the file to `base.twig`. Now on to preparing this file to be extended.
+
+### Defining extendable blocks
+The first thing we should think about is what we want to be extendable, and what we want to be constant throughout all of the pages in our app. It's safe to assume – as a starting point – that everything except for the page content and the content of the `<title>` tag in the `<head>` of our file will be shared.
+
+#### Block syntax breakdown
+The syntax of most twig keywords is to use curly brackts with percent signs as the start and stop of a twig statement (`{% keyword argument %}`). In this case, the `keyword` is `block`, and the only argument it needs is a name for the block (so that extending templates can reference this block directly when declaring content). 
+
+The second part of most keyword-based twig statements is an `end` statement. This is effectively a simple way to tell twig you're done with this twig statement. It usually follows the pattern of `end` followed by the keyword you used in your opening statement (in this case `block`), which gives us the `{% endblock %}` statement.
+
+The content inside of the `block` is our default content. So, if a template extends our `base.twig` and doesn't declare any content for the named block, the default text will be used.
+
+#### Adding our blocks
+With that said, update your `<title>` tag in `base.twig` to look like this:
+
+```twig
+<title>{% block title %}Forum Madness{% endblock %}</title>
+```
+
+And replace all content inside of your `<body>` tag to look like this:
+
+```twig
+{% block content %}{% endblock %}
+```
+
+That's all we have to do. You should now have a `base.twig` file that looks like this:
+
+```twig
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    {% block content %}{% endblock %}
+</body>
+</html>
+```
+
+### Extending our new base.twig file
+Now that we've stubbed out a base template, we can extend it to create our new home page.
+
+Create a new folder in `src/views` called `pages`. Inside of this folder create a new file called `home.twig`.
+
+Add the following code to your `home.twig` file:
+
+```twig
+{% extends 'base.twig' %}
+
+{% block title %}Forum Madness - Home{% endblock %}
+
+{% block content %}
+    <h1>Welcome to Forum Madness!!!</h1>
+{% endblock %}
+```
+
+That's all we have to do to create a fully compliant HTML file now!!! The `home.twig` file extends the basic template of the `base.twig` file, and simply declares the unique content of this page in the pre-defined named `blocks` that the `base.twig` makes available to it. In this case, the `title` and `content` of the page. 
+
+### Rendering our new home page
+So, now we have to render this thing! This part is pretty simple, actually. Since we've already configured our view engine to render twig files, we just need to update the file that's being rendered for the `/` route.
+
+Update this line in your `index.js`:
+
+```javascript
+response.render('index');
+```
+
+To look like this:
+
+```javascript
+response.render('pages/home');
+```
+
+#### Some more context
+Since we configured our `views` option earlier to point to `__dirname + '/src/views'`, this is the base point of reference for our view engine (twig). Our new `home.twig` file, however, is located at `/src/views/pages/home.twig`. For this reason, we need to give our render method a little more context about the file it's rendering. More specifically, we need to give it the path to the file relative to the `views` directory that we defined earlier.
+
+This is why we are calling `response.render(...)` with `pages/home` instead of just `home`.
+
+### Checking our work
+After saving the changes to your `index.js` file, restart your `node` process. You can do this in the terminal by hitting `ctrl + c` then re-running `node index.js`. 
+
+Once this process has started up again, and you see the `App is listening on localhost:3000...` message, you can visit [http://localhost:3000](http://localhost:3000) in your browser, and you should now see a page with a title of `Forum Madness - Home`, and page content of `Welcome to Forum Madness!!!`... If you inspect this page, you'll see that all of the scaffolding for this page is still there. The `<!doctype>`, `<html>`, `<head>`, and `<body>` tags are all in place as your would expect. 
+
+The difference this time is, they came from our `base.twig` file via twig `extends`!
+
+In the next section, we'll start to see how much time this saves us when we add more pages to our application.
+
+---
+
+## Part 9: Adding more routes
 Coming soon...
