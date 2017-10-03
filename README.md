@@ -29,6 +29,9 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
 - [Part 6: Setting up twig.js](#part-6-setting-up-twigjs)
     - [Making twig.js available to our Express app](#making-twigjs-available-to-our-express-app)
 - [Part 7: The power of templates and view engines](#part-7-the-power-of-templates-and-view-engines)
+    - [Twig loops](#twig-loops)
+    - [Twig extends](#twig-extends)
+- [Part 8: Creating our base.twig file](#part-8-creating-our-basetwig-file)    
 
 ---
 
@@ -403,4 +406,96 @@ Once this process has started up again, and you see the `App is listening on loc
 ---
 
 ## Part 7: The power of templates and view engines
+So, what exactly is the benefit of using templates and a view engine?
+
+Simply put, you'll never have to write the same HTML twice... ever! Twig as a view engine allows us to write some HTML, and place some "placeholders" for either variables that our application will be able to pass our template at render time, or even entire other blocks of HTML with their own variable placeholders.
+
+It also introduces to HTML the concept of **conditions** and **loops**. 
+
+### Twig loops
+This means – for example – that you can provide your template an array of navigation items that looks like this:
+
+```javascript
+let nav = [{
+    text: 'Home',
+    url: '/'
+}, {
+    text: 'New thread',
+    url: '/new-thread'
+}];
+```
+
+And – in your template file – do something like this:
+
+```twig
+<ul class="navigation">
+    {% for navItem in nav %}
+    <li>
+        <a href="{{ navItem.url }}">{{ navItem.text }}</a>
+    </li>
+    {% endfor %}
+</ul>
+```
+
+Don't worry so much about the syntax, but try to get your head around what this actually does. It allows us to – with an inline `for` loop – iterate over each item in the `nav` array, and render an `<li>` for each of them.
+
+Hopefully it's obvious how much time this can save when writing the HTML for your application.
+
+### Twig extends
+The concept of `extends` in Twig takes the idea of not repeating the same code over and over to a whole new level. In a multi-page application, you're likely to have a good number of HTML pages. Each of these pages has it's own `<!doctype>`, it's own `<head>` tag including the same `<link>` tags for CSS, plus a `<body>` tag, maybe even the same `<nav>` element.
+
+What if you could create a "base" HTML file that organized all of this repeated code, and simply left a placeholder for the content of any page that wanted to "adopt" this HTML as a "wrapper"... **That** is what Twig's `extends` directive does.
+
+You start with a file like this:
+
+`base.twig`
+
+```twig
+<!doctype>
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="/src/main.css" type="text/css" />
+    </head>
+    <body>
+        {% block content %}{% endblock %}
+    </body>
+</html>
+```
+
+This file acts as your "base" file for any page. As you can see, there are a couple of named `{% block X %}{% endblock %}` placeholders scattered throughout the HTML. These can be defined by another file that `extends` this base Twig template.
+
+This looks like this:
+
+`home.twig`
+
+```twig
+{% extends 'base.twig' %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+    <h1>Welcome to my home page!</h1>
+{% endblock %}
+```
+
+`about.twig`
+
+```twig
+{% extends 'base.twig' %}
+
+{% block title %}About Page{% endblock %}
+
+{% block content %}
+    <h1>Welcome to my about page!</h1>
+{% endblock %}
+```
+
+As you can see, we get to use all of the same `<html>`, `<head>`, and `<body>` tags. We're just adding content in the `title` and `content` blocks. This means that our pages don't need to re-define what a basic HTML page looks like in our app. It just extends our `base` template. And if anything about this `base` file changes, it's propogated throughout all of the pages that `extends` it.
+
+Pretty amazing, eh?!?!
+
+---
+
+## Part 8: Creating our base.twig file
 Coming soon...
