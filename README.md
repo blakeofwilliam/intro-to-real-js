@@ -241,11 +241,11 @@ _And **that's** how we configured our own web server!!!_
 
 ### Additional reading
 
-[Express:Request](http://expressjs.com/en/4x/api.html#reqhttp://expressjs.com/en/4x/api.html#req)
+[Express:Request](http://expressjs.com/en/4x/api.html#req)
 
-[Express:Response](http://expressjs.com/en/4x/api.html#reshttp://expressjs.com/en/4x/api.html#res)
+[Express:Response](http://expressjs.com/en/4x/api.html#res)
 
-[Basic Routing in Express](http://expressjs.com/en/starter/basic-routing.htmlhttp://expressjs.com/en/starter/basic-routing.html)
+[Basic Routing in Express](http://expressjs.com/en/starter/basic-routing.html)
 
 ---
 
