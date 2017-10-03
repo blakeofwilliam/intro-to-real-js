@@ -391,7 +391,7 @@ response.sendFile(__dirname + '/src/views/index.html');
 response.render('index');
 ```
 
-Since we've registered our `view engine` (twig) and the location of our `views` (__dirname + '/src/views') without application's `configure` method, all we need to do with our response is call `response.render(...)`. This method takes a single argument: the name of the twig file we'd like to render (without the `.twig` extension). It then hadles the task of parsing the file, getting the HTML output and calling `response.send()` on our behalf.
+Since we've registered our `view engine` (twig) and the location of our `views` (__dirname + '/src/views') without application's `set` method, all we need to do with our response is call `response.render(...)`. This method takes a single argument: the name of the twig file we'd like to render (without the `.twig` extension). It then hadles the task of parsing the file, getting the HTML output and calling `response.send()` on our behalf.
 
 Without having changed the content since renaming our old `index.html` file, this may seem kind of pointless, but I promise, this will pay off in the long run.
 
