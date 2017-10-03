@@ -491,9 +491,11 @@ This looks like this:
 {% endblock %}
 ```
 
-As you can see, we get to use all of the same `<html>`, `<head>`, and `<body>` tags. We're just adding content in the `title` and `content` blocks. This means that our pages don't need to re-define what a basic HTML page looks like in our app. It just extends our `base` template. And if anything about this `base` file changes, it's propogated throughout all of the pages that `extends` it.
+As you can see, we dont' have to re-declare the `<html>`, `<head>`, and `<body>` tags. They already exist in the `base.twig` file that's being extended. Once that's done, all that's required is that we add content to the `title` and `content` blocks that the `base.twig` file declares. 
 
-Pretty amazing, eh?!?!
+This means that our pages don't need to re-define what a basic HTML page looks like in our app. It just extends our `base` template. And if anything about this `base` file changes, it's propogated throughout all of the pages that `extends` it.
+
+The **_FUTURE_**!!!
 
 ---
 
