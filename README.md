@@ -36,7 +36,9 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Extending our new base.twig file](#extending-our-new-basetwig-file)
     - [Rendering our new home page](#rendering-our-new-home-page)
     - [Checking our work](#checking-our-work)
-- [Part 9: Adding more routes](#part-9-adding-more-routes)
+- [Part 9: Using nodemon](#part-9-using-nodemon)
+    - [Installing global npm dependencies](#installing-global-npm-dependencies)
+- [Part 10: Adding more routes](#part-10-adding-more-routes)
 
 ---
 
@@ -600,5 +602,31 @@ In the next section, we'll start to see how much time this saves us when we add 
 
 ---
 
-## Part 9: Adding more routes
+## Part 9: Using nodemon
+So, I'm sure by now you're probably pretty annoyed with having to restart your node process every time you make a change. You're not the only one...
+
+Luckily, someone in the open-source community has created a tool to solve this problem, and it's called `nodemon`.
+
+Nodemon allows you to start your node process and it will automatically update every time a file changes that is referenced by your node app.
+
+### Installing global npm dependencies
+Up until now, we've added project dependencies using `npm`. However, nodemon is a dependency that we don't necessarily want to add to our project. We just want it to be globally available on the computer that's running our application. In the same way that we extended the `npm install package-name` code with `--save` to save a dependency to our project, `npm` offers the `-g` flag to install a dependency globally on your machine.
+
+Using the same format as before – but with the `-g` flag instead of the `--save` flag – we can install nodemon using the following code:
+
+```bash
+npm install nodemon -g
+```
+
+This will add a new CLI (command line interface) to our machine. You may not know it, but you've been using CLIs this whole time. Any program that is available via the terminal is known as a Command Line Interface. So, `npm` and `node` are both CLIs. 
+
+Once you've run the `npm install` code for nodemon, you can kill your `node` process using `ctrl + c` in the terminal, and this time execut `nodemon index.js` in the terminal.
+
+Once this process has started up again, and you see the `App is listening on localhost:3000...` message, you can visit [http://localhost:3000](http://localhost:3000) in your browser, and you should see the exact same page as before.
+
+The difference this time is that nodemon will now monitor your `index.js` file for changes. Any time we save the `index.js` file from now on, the app should auto-update without needing to be restarted.
+
+---
+
+## Part 10: Adding more routes
 Coming soon...
