@@ -26,7 +26,9 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
 - [Part 5: Defining our application](#part-5-defining-our-application)
     - [Application overview](#application-overview)
     - [The tech stack](#the-tech-stack)
-- [Part 6: More application prerequisites](#part-6-more-application-prerequisites)
+- [Part 6: Setting up twig.js](#part-6-setting-up-twigjs)
+    - [Making twig.js available to our Express app](#making-twigjs-available-to-our-express-app)
+- [Part 7: The power of templates and view engines](#part-7-the-power-of-templates-and-view-engines)
 
 ---
 
@@ -330,7 +332,7 @@ Here's what we'll need to accomplish all of this:
 - A database to store users, passwords, threads, and comments (we will cover this in great detail later, so don't worry if this sounds intimidating)
 
 ### The tech stack
-**basic pages**: we'll be using basic HTML, CSS, and Javascript.
+**basic pages**: we'll be using basic CSS, and Javascript, as well as an HTML templating language called [twig.js](https://github.com/twigjs/twig.js/wiki). Twig will allow us to write some very dynamic HTML templates to support the thread list and thread detail pages with a single template each, leveraging our templates to fill in the content for a given thread ID without needed a specific HTML page for each. This will become much more clear once we get into it.
 
 **HTTP Server**: as you may already know, we'll be using Node.js and Express
 
@@ -342,5 +344,63 @@ _Don't worry too much about the specifics of how we'll be using these technologi
 
 ---
 
-## Part 6: More application prerequisites
+## Part 6: Setting up twig.js
+Before we dig in, be sure to install the [Twig](https://marketplace.visualstudio.com/items?itemName=whatwedo.twig) extension for Visual Studio code. 
+
+We'll circle back to what Twig is and how we'll use it in a little bit, but for now let's get twig added as a dependency and wired up to our express app.
+
+### Making twig.js available to our Express app
+As referenced in the [twig.js docs](https://github.com/twigjs/twig.js/wiki#appjs), it's relatively easy to register twig.js as your application's template engine. It's basically done in three basic parts.
+
+#### Add the twig dependency to your project
+This part should be starting to get familiar. It's a pretty common task in modern javascript development. In the terminal, type the following, and hit `enter`.
+
+```bash
+npm install twig --save
+```
+
+#### Configure your app to use twig as the view engine
+In order to use twig as our app's `view engine`, we need to configure our application a little using an Express method called `set`. The `set` method takes two arguments: the name of the configuration option, and the value of the configuration option.
+
+For our case, we only need to set the following two config options: 
+
+**views**: the location of our `views` directory (the location of our template files); for this config option, we'll be leveraging the `__dirname` variable again
+
+**view engine**: the name of the npm package that will act as our "view engine"; this will be `twig`
+
+```javascript
+app.set('views', __dirname + '/src/views');
+app.set('view engine', 'twig');
+```
+
+#### Update our index.html to be a twig file and render it
+Now that we've registered our view engine, we can change the extension of our existing `index.html` file in the `src/views` directory. Right click on this file and choose the `Rename` option. Rename the file to `index.twig`. Eventually, this new file extension will make some really nice add-ons to HTML available to us. For now, we'll test that everything is working by rendering this file as-is.
+
+##### Rendering our template file
+In our `index.js` file, we already have a single route that is using the `response.sendFile(...)` method to send the `index.html` file that we just renamed. Since we renamed it, that file is no longer available to send... and it's a `?twig?` file. However, we have registered a view engine that is able to render Twig files. We just need to update our existing route to render our new `index.twig` file instead of sending our old `index.html` file.
+
+**Replace this line:**
+
+```javascript
+response.sendFile(__dirname + '/src/views/index.html');
+```
+
+**With this:**
+
+```javascript
+response.render('index');
+```
+
+Since we've registered our `view engine` (twig) and the location of our `views` (__dirname + '/src/views') without application's `configure` method, all we need to do with our response is call `response.render(...)`. This method takes a single argument: the name of the twig file we'd like to render (without the `.twig` extension). It then hadles the task of parsing the file, getting the HTML output and calling `response.send()` on our behalf.
+
+Without having changed the content since renaming our old `index.html` file, this may seem kind of pointless, but I promise, this will pay off in the long run.
+
+#### Test our changes
+After saving the changes to your `index.js` file, restart your `node` process. You can do this in the terminal by hitting `ctrl + c` then re-running `node index.js`. 
+
+Once this process has started up again, and you see the `App is listening on localhost:3000...` message, you can visit [http://localhost:3000](http://localhost:3000) in your browser, and you should see the same HTML you were seeing before... But this time, it's rendered by TWIG!!!
+
+---
+
+## Part 7: The power of templates and view engines
 Coming soon...

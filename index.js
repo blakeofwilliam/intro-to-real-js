@@ -3,10 +3,14 @@
 const express = require('express');
 // create a new instance of `express`
 const app = express();
+// Configure application
+app.set('views', __dirname + '/src/views');
+app.set('view engine', 'twig');
+
 // give our app some basic rules about what to 
 // do with a web request
 app.get('/', (request, response) => {
-    response.sendFile(__dirname + '/src/views/index.html');
+    response.render('index');
 });
 
 // tell our app what port to listen for requests on
