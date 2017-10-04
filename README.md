@@ -38,7 +38,10 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Checking our work](#checking-our-work)
 - [Part 9: Using nodemon](#part-9-using-nodemon)
     - [Installing global npm dependencies](#installing-global-npm-dependencies)
-- [Part 10: Adding more routes](#part-10-adding-more-routes)
+- [Part 10: Adding another page](#part-10-adding-another-page)
+    - [The new thread page](#the-new-thread-page)
+    - [Adding the new thread route](#adding-the-new-thread-route)
+- [Part 11: Dynamic routes](#dynamic-routes)
 
 ---
 
@@ -628,5 +631,51 @@ The difference this time is that nodemon will now monitor your `index.js` file f
 
 ---
 
-## Part 10: Adding more routes
+## Part 10: Adding another page
+Now that we've set up a base.twig file to act as a wrapper for the rest of our pages, we can extend it for our new pages and add some new routes. The first of these will be pretty simple, since it's not very different from our `/` route. 
+
+### The new thread page
+This route will be responsible for rendering the "new thread" page. For this reason, before we add the route to our `index.js` file, we'll need to create a new twig template for this page in our `views` directory. In the `src/views/pages` folder, create a new file, and name it `new-thread.twig`.
+
+Add the following code to your new twig file:
+
+```twig
+{% extends 'base.twig' %}
+
+{% block title %}Forum Madness - New Thread{% endblock %}
+
+{% block content %}
+    <h1>Create new thread</h1>
+    <p>The form for new threads will go here eventually...</p>
+{% endblock %}
+```
+
+This should look pretty familiar by now. It's just the same type of extension we did for the `home.twig` file. The only difference is the content.
+
+#### Adding the new thread route
+Now that you have a new template for the new thread page, you can add a route to your `index.js`. After the existing route in your `index.js` file, add the following code:
+
+```javascript
+app.get('/new-thread', (request, response) => {
+    response.render('pages/new-thread');
+});
+```
+
+Save the file and wait for `nodemon` to restart your app (no need to do this manually anymore).
+
+After `nodemon` finishes, you should see this output in your terminal:
+
+```
+[nodemon] restarting due to changes...
+[nodemon] starting `node index.js`
+App is listening on localhost:3000...
+```
+
+You should now be able to go to both [http://localhost:3000/](http://localhost:3000/) AND [http://localhost:3000/new-thread](http://localhost:3000/new-thread). Ensure that the content for these two pages is different.
+
+If so, you've just configured the second route for your application!!!
+
+---
+
+## Part 11: Dynamic pages
 Coming soon...

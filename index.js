@@ -13,6 +13,10 @@ app.get('/', (request, response) => {
     response.render('pages/home');
 });
 
+app.get('/new-thread', (request, response) => {
+    response.render('pages/new-thread');
+});
+
 // tell our app what port to listen for requests on
 app.listen(3000, () => {
     console.log('App is listening on localhost:3000...');
