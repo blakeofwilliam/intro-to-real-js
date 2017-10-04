@@ -64,6 +64,8 @@ app.get('/threads/:id', (request, response) => {
     response.render('pages/thread-detail', context);
 });
 
+app.use('/assets', express.static('src'));
+
 // tell our app what port to listen for requests on
 app.listen(3000, () => {
     console.log('App is listening on localhost:3000...');

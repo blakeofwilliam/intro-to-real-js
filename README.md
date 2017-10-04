@@ -58,6 +58,9 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Using our helper method when rendering](#using-our-helper-method-when-rendering)
     - [Updating the navigation.twig to use the context](#updating-the-navigationtwig-to-use-the-context)
 - [Part 15: Starting to style our pages](#part-15-starting-to-style-our-pages)
+    - [Enabling static assets](#enabling-static-assets)
+    - [Adding CSS to our base.twig](#adding-css-to-our-basetwig)
+- [Part 16: Setting up our database](#part-16-setting-up-our-database)
 
 ---
 
@@ -986,4 +989,111 @@ Save your files, and re-visit your site. You should still see your navigation on
 ---
 
 ## Part 15: Starting to style our pages
+I'm not going to get too crazy into explaining the CSS we're about to add just yet, because it's all pretty straight-forward.
+
+In the `src/css` folder, create a file called `style.css` and add the following code:
+
+```css
+body {
+    background: #F8F8F8;
+    color: #96A6A4;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+a {
+    color: #D84B68;
+    text-decoration: underline;
+}
+
+nav.forum-nav {
+    background: white;
+    width: 100%;
+}
+
+ul.nav-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+li.nav-item {
+    display: inline-block;
+    list-style: none;
+    padding: 0;
+}
+
+li.nav-item > a {
+    color: #3E7C91;
+    display: inline-block;
+    padding: 15px;
+    text-decoration: none;
+}
+
+li.nav-item > a:hover {
+    background: #90BBC1;
+    color: white;
+}
+
+li.nav-item.active > a,
+li.nav-item.active > a:hover {
+    background: #3E7C91;
+    color: white;
+    cursor: pointer;
+}
+
+li.nav-item > button.nav-button {
+    background: #D84B68;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    text-transform: uppercase;
+}
+
+button.nav-button > a {
+    color: white;
+    text-decoration: none;
+}
+```
+
+This is just some basic styling for the body and navigation. Nothing super over-the-top here.
+
+### Enabling static assets
+In order to reference this CSS file, we'd normally enable a route for `/src/css/style.css` and use `response.sendFile(...)` to return the contents. However, we'll probably have more files show up in the future, and that can get pretty old pretty fast.
+
+Luckily, Express thought of this one, too!
+
+In the `index.js` file, after all of the route declarations, add the following code:
+
+```javascript
+app.use('/assets', express.static('src'));
+```
+
+This code uses the `app.use(...)` method. This method takes two arguments:
+
+- a path for the type of "middleware" you'd like to use
+- the actual middleware
+
+All middleware is is a bit of code that binds specific behavior to your app without much configuration. In this case, we're using Express' build-in `static` middleware. The way this is configured is: we give it a directory that we'd like to server statically (meaning none of the files should be manipulated before being returned), and it will set up routes in the background for all of the files.
+
+Since we're giving this static folder the `path` of `/assets`, we can basically replace `src` with `/assets` in the path to the file we'd like to use, and Express will route to the file. So, our CSS file will be included in our `base.twig` file at the path `/assets/css/style.css`. Using this sort of "rewrite" is a pretty common security measure to ensure that site visitors don't know the actual directory structure of your code.
+
+### Adding CSS to our base.twig
+This one's pretty easy. :)
+
+In your `base.twig`, add the following code to the `<head>` tag:
+
+```twig
+<link rel="stylesheet" href="/assets/css/style.css" type="text/css" />
+```
+
+That's it! Now we've wired up our CSS.
+
+---
+
+## Part 16: Setting up our database
 Coming soon...

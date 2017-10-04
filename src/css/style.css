@@ -1,0 +1,64 @@
+body {
+    background: #F8F8F8;
+    color: #96A6A4;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+a {
+    color: #D84B68;
+    text-decoration: underline;
+}
+
+nav.forum-nav {
+    background: white;
+    width: 100%;
+}
+
+ul.nav-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+li.nav-item {
+    display: inline-block;
+    list-style: none;
+    padding: 0;
+}
+
+li.nav-item > a {
+    color: #3E7C91;
+    display: inline-block;
+    padding: 15px;
+    text-decoration: none;
+}
+
+li.nav-item > a:hover {
+    background: #90BBC1;
+    color: white;
+}
+
+li.nav-item.active > a,
+li.nav-item.active > a:hover {
+    background: #3E7C91;
+    color: white;
+    cursor: pointer;
+}
+
+li.nav-item > button.nav-button {
+    background: #D84B68;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    text-transform: uppercase;
+}
+
+button.nav-button > a {
+    color: white;
+    text-decoration: none;
+}
