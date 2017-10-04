@@ -41,7 +41,9 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
 - [Part 10: Adding another page](#part-10-adding-another-page)
     - [The new thread page](#the-new-thread-page)
     - [Adding the new thread route](#adding-the-new-thread-route)
-- [Part 11: Dynamic routes](#dynamic-routes)
+- [Part 11: Adding yet another page](#part-11-adding-yet-another-page)
+    - [The solution](#the-solution)
+- [Part 12: Dynamic routes](#part-12-dynamic-routes)
 
 ---
 
@@ -677,5 +679,40 @@ If so, you've just configured the second route for your application!!!
 
 ---
 
-## Part 11: Dynamic pages
-Coming soon...
+## Part 11: Adding yet another route
+We've gone through this a few times now, so I'd suggest before reading this section in full that you attempt the following task first. I'll detail how it's done after, but if you're up for the challenge attempt the following...
+
+- Create a `threads.twig` page template that `extends` `base.twig`
+- Add a route for the `/threads` path that renders this new `threads.twig` page template
+
+### The solution
+In the `src/views/pages` folder, create a file named `threads.twig` and add the following content to this file:
+
+```twig
+{% extends 'base.twig' %}
+
+{% block title %}Forum Madness - Threads{% endblock %}
+
+{% block content %}
+    <h1>Threads</h1>
+    <p>The list of threads will go here eventually...</p>
+{% endblock %}
+```
+
+Save this file.
+
+In your `index.js` file, after your `/new-thread` route, add the following code:
+
+```javascript
+app.get('/threads', (request, response) => {
+    response.render('pages/threads');
+});
+```
+
+Save this file, and wait for `nodemon` to restart your node process.
+
+You should now be able to visit your new [http://localhost:3000/threads](http://localhost:3000/threads) page.
+
+---
+
+## Part 12: Dynamic routes
