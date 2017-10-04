@@ -829,7 +829,7 @@ Because our `include` keyword is expecting the twig template that we want to inc
 In your `base.twig` file – in the `<body>` tag, but before the `content` block – add the following line of code:
 
 ```twig
-{% include 'partials/navigation' %}
+{% include 'partials/navigation.twig' %}
 ```
 
 Save your `base.twig` file, and re-visit any page on your site.
