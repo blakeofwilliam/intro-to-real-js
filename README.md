@@ -44,6 +44,10 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
 - [Part 11: Adding yet another page](#part-11-adding-yet-another-page)
     - [The solution](#the-solution)
 - [Part 12: Dynamic routes](#part-12-dynamic-routes)
+    - [Adding a path parameter](#adding-a-path-parameter)
+    - [Creating our thread detail page](#creating-our-thread-detail-page)
+    - [The lifecycle of path parameters](#the-lifecycle-of-path-parameters)
+- [Part 13: Building our navigation](#part-13-building-our-navigation)
 
 ---
 
@@ -716,4 +720,61 @@ You should now be able to visit your new [http://localhost:3000/threads](http://
 ---
 
 ## Part 12: Dynamic routes
+Before we add our final page, we need to cover a new concept in how Express handles routing. This is the idea of `dynamic routes`. All this means is a route that has a placeholder for any or all of its path.
+
+Take the example of our thread detail page. When a user clicks on an item in our threads list (once it's created in the `/threads` page), the expectation is that it will link to a page with a path that looks something like `/threads/1234` where `1234` is the ID of the thread we want to show the detail for.
+
+This can get pretty tedious if we had to manually create a new route for every ID. Especially if we are allowing users to create new threads at will. Luckily, Express has solved this problem for us.
+
+### Adding a path parameter
+The way that Express solves this problem is with something called `path paramenters`. The use of path parameters allows us to create named placeholders in our path that we can then use the value for in our route's callback. The only thing you need to do to create a path parameter is prepend the name of your parameter with a `:` in your path.
+
+In our case, we'll be using a path that looks something like this: `/threads/:id`. What this does is create a path paramenter named `id` in the `request` object that's passed to our route's callback. This `id` property is actually added to a property called `request.params`. So, in our callback, if we want to access this `id` parameter, we can store the value of `request.params.id` in a variable and use it however we need to.
+
+Let's do this now...
+
+In the `index.js` file, after your `/threads` route, add the following code:
+
+```javascript
+app.get('/threads/:id', (request, response) => {
+    const id = request.params.id;
+
+    response.render('pages/thread-detail', { id: id });
+});
+```
+
+Save the file. There's some new syntax in there, I know. We'll get to that in a minute.
+
+However, if you visit `/threads/1234` right now, you might notice that the page is broken. It's giving you an Error. This is because we haven't created a template for the `pages/thread-detail` that we're rendering. Let's do this right quick.
+
+### Creating our thread detail page
+In the `src/views/pages` folder, create a file named `thread-detail.twig` that `extends` `base.twig`.
+
+In the `content` `block`, add the following code:
+
+```twig
+<h1>You're viewing thread {{ id }}</h1>
+<p>The details of this thread will eventually go here...</p>
+```
+
+Save the file. 
+
+I know, there's some new syntax here as well. We're about to get to that.
+
+### The lifecycle of path parameters
+As you may have noticed, a few things were different about this template and route. Firstly, we used this new `path parameter` idea. 
+
+However, we also passed a new argument to the `response.render(...)` method. This was an object that looked like this `{ id: id }`. Because we stored our `id` path parameter in a constant variable called `id`, this is just an object that contains a single property called `id` where the value is the value passed through our path parameter. This object, when passed as the second argument of our `response.render(...)` method, is known as the `context`. This context is a way for use to pass data to our twig template, and – wherever we want that data – render it inline as part of our page's content.
+
+The way we did that in our twig file was to use `{{ id }}`. In twig templates, any time you wrap text in double curly brackets, it will look at the `context` object passed to the renderer, and replace this statement with the value of the context property with the same name. In this case, we passed `{ id: id }` as the `context` object. 
+
+If a user visits `/threads/1234`, then the `const id = request.params.id;` line will store `1234` in the `id` variable. This value then gets passed to the `response.render(...)` method in the `context` object – with the property name `id` – as the second argument. The template then uses `{{ id }}` to place the value `1234` in the template, dynamically at render time.
+
+So, when visiting `/threads/1234`, you should see `You're viewing thread 1234` on the page. When visiting `/threads/5678` you should see `You're viewing thread 5678`. And so on...
+
+But we're using **ONE ROUTE** for all IDs!!!
+
+---
+
+## Part 13: Building our navigation
 Coming soon...
