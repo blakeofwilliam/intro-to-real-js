@@ -52,6 +52,12 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Creating the navigation partial](#creating-the-navigation-partial)
     - [Including the navigation partial](#including-the-navigation-partial)
 - [Part 14: Making our navigation data driven](#part-14-making-our-navigation-data-driven)
+    - [Twig for loops](#twig-for-loops)
+    - [Creating our navigation data set](#creating-our-navigation-data-set)
+    - [Writing a buildContext helper method](#writing-a-buildcontext-helper-method)
+    - [Using our helper method when rendering](#using-our-helper-method-when-rendering)
+    - [Updating the navigation.twig to use the context](#updating-the-navigationtwig-to-use-the-context)
+- [Part 15: Starting to style our pages](#part-15-starting-to-style-our-pages)
 
 ---
 
@@ -840,5 +846,144 @@ Pretty sweet, huh?!?!
 
 ---
 
-# Part 14: Making our navigation data driven
+## Part 14: Making our navigation data driven
+Our navigation template is nice. It gives us a way to isolate that portion of our application and edit it in one place. But, believe it or not, there's still more repeat code than there should be. However, as usual, before we dig into fixing that, there's some prerequisite knowledge required to make it all make sense.
+
+### Twig for loops
+We've seen how twig allows us to isolate code for the purpose of reuse in multiple files, but what if we have a specific element that we want to render once for ever element in a data set? This is where the `for` keyword comes in handy. 
+
+The key difference between the `for` keyword and the others we've used so far is that the `for` keyword is also accompanied by the `in` keyword. This is pretty much _always_ going to be the case when using the `for` keyword. The basic syntax is `{% for item in dataSet %}...{% endfor %}` where `item` is a temporary variable name for each item in a data set and `dataSet` is the item you're iterating over with your `for` loop.
+
+### Creating our navigation data set
+Before we put this new knowledge to use, we first need to create a data set to iterate over. We're going to be using the `for` keyword to generate our navigation, so in the `index.js` file – after the `app.set()` calls and before your first route declaration – add the following code:
+
+```javascript
+const navigation = [
+    {
+        text: 'Home',
+        type: 'link',
+        url: '/'
+    },
+    {
+        text: 'Threads',
+        type: 'link',
+        url: '/threads',
+    },
+    {
+        text: 'New Thread',
+        type: 'button',
+        url: '/new-thread'
+    }
+];
+```
+
+This array of objects will be referenced in our template to dynamically generate our navigation's `<li>` and `<a>` tags. However, since we're passing a `context` to the `response.render(...)` method at least one time already, we'll probably need a helper function to ensure that this `navigation` variable is always added to the context.
+
+Let's do that now.
+
+### Writing a buildContext helper method
+The helper method we'll need to accomplish this task will need to do a few different things.
+
+- Declare a default context to be passed to the `response.render(...)` method
+    - This will include our navigation, so that it will always be included in the context
+- Accept any additions to the context from a specific route callback
+- If additional context is not provided, just return the default context
+- Otherwise, merge the default context with the passed additions to the context
+
+With that out of the way, let's write it. After your `const navigation...` variable declaration, create a function called `buildContext` that accepts one argument called `ctx`.
+
+Let's have this function perform the above tasks:
+
+```javascript
+function buildContext(ctx) {
+    // define the default context for rendering
+    let defaultContext = {
+        navigation: navigation
+    };
+
+    if (!ctx) {
+        // Return the defaultContext
+        return defaultContext;
+    }
+
+    // merge the defaultContext and ctx into an empty object
+    // then return it
+    return Object.assign({}, defaultContext, ctx);
+}
+```
+
+That's all we need for our helper function. Now let's use it.
+
+### Using our helper method when rendering
+Now that we have a helper function to handle our context, we'll need to make some changes to all of our routes.
+
+#### Routes not currently passing a context
+For all routes that don't currently pass a context to `response.render(...)`, we'll need to do two things:
+
+- declare a variable called `context` where the value is the return value of `buildContext()`
+- pass the new `context` variable to the `response.render(...)` method
+
+I'll use the `/` route as an example, and you can handle the others that are not currently passing a context.
+
+```javascript
+app.get('/', (request, response) => {
+    const context = buildContext();
+
+    response.render('pages/home', context);
+});
+```
+
+Since we're not providing any context information to the `buildContext(...)` method, it will simply return the `defaultContext`, which includes our navigation array.
+
+#### Routes currently passing a context
+For all routes currently passing a context (this should only be the `/threads/:id` route at this point), we'll need to do mostly the same thing, but with one extra step:
+
+- declare a variable called `context` where the value is the return value of `buildContext(...)`
+    - in this case, however, we need to pass the current object being passed to `response.render(...)` as the context to our `buildContext(...)` method
+- pass the new `context` variable to the `response.render(...)` method
+
+For the `/threads/:id`, this should look like this:
+
+```javascript
+app.get('/threads/:id', (request, response) => {
+    const id = request.params.id;
+    const context = buildContext({ id: id });
+
+    response.render('pages/thread-detail', context);
+});
+```
+
+Since we're providing additional context info to the method, the method will return a merged context object with both our default context's `navigation` property and our custom context's `id` property. This will allow our other behavior to continue working as well as give support for our upcoming navigation changes.
+
+### Updating the navigation.twig to use the context
+Now that we're passing our navigation array to our templates through the context, we can use this context property to loop through this array, and render an `<li>` for each object in the array.
+
+Inside of the `<ul>` tag in your `navigation.twig` file, replace all of the content with the following code:
+
+```twig
+{% for item in navigation %}
+    <li class="nav-item">
+        {% if item.type == 'button' %}
+        <button class="nav-button">
+        {% endif %}
+
+        <a href="{{ item.url }}">{{ item.text }}</a>
+
+        {% if item.type == 'button' %}
+        </button>
+        {% endif %}
+    </li>
+{% endfor %}
+```
+
+#### How it works
+This code is using the `for` keyword to loop through each `item` in the `navigation` context property. For each item, it renders an `<li>` item. Inside of this `<li>` tag, it does two checks to see if the `type` property of the `item` is `button`. If so, it renders opening and closing `<button>` tags. If the `type` property is not `button`, these will be ignored.
+
+We will go into detail about the `if` keyword at a later point, but – for now – this should be enough to explain this new code.
+
+Save your files, and re-visit your site. You should still see your navigation on all pages, however, this time it's data driven!
+
+---
+
+## Part 15: Starting to style our pages
 Coming soon...

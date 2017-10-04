@@ -7,24 +7,61 @@ const app = express();
 app.set('views', __dirname + '/src/views');
 app.set('view engine', 'twig');
 
+const navigation = [
+    {
+        text: 'Home',
+        type: 'link',
+        url: '/'
+    },
+    {
+        text: 'Threads',
+        type: 'link',
+        url: '/threads',
+    },
+    {
+        text: 'New Thread',
+        type: 'button',
+        url: '/new-thread'
+    }
+];
+
+function buildContext(ctx) {
+    let defaultContext = {
+        navigation: navigation
+    };
+
+    if (!ctx) {
+        return defaultContext;
+    }
+
+    return Object.assign({}, defaultContext, ctx);
+}
+
 // give our app some basic rules about what to 
 // do with a web request
 app.get('/', (request, response) => {
-    response.render('pages/home');
+    const context = buildContext();
+
+    response.render('pages/home', context);
 });
 
 app.get('/new-thread', (request, response) => {
-    response.render('pages/new-thread');
+    const context = buildContext();
+
+    response.render('pages/new-thread', context);
 });
 
 app.get('/threads', (request, response) => {
-    response.render('pages/threads');
+    const context = buildContext();
+
+    response.render('pages/threads', context);
 });
 
 app.get('/threads/:id', (request, response) => {
     const id = request.params.id;
+    const context = buildContext({ id: id });
 
-    response.render('pages/thread-detail', { id: id });
+    response.render('pages/thread-detail', context);
 });
 
 // tell our app what port to listen for requests on

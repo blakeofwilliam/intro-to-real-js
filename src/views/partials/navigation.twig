@@ -1,17 +1,17 @@
 <nav class="forum-nav">
     <ul class="nav-items">
-        <li class="nav-item">
-            <a href="/">Home</a>
-        </li>
-        <li class="nav-item">
-            <a href="/threads">Threads</a>
-        </li>
-        <li class="nav-item">
-            <a href="/new-thread">
+        {% for item in navigation %}
+            <li class="nav-item">
+                {% if item.type == 'button' %}
                 <button class="nav-button">
-                    New thread
+                {% endif %}
+
+                <a href="{{ item.url }}">{{ item.text }}</a>
+
+                {% if item.type == 'button' %}
                 </button>
-            </a>
-        </li>
+                {% endif %}
+            </li>
+        {% endfor %}
     </ul>
 </nav>
