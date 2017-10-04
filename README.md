@@ -679,7 +679,7 @@ If so, you've just configured the second route for your application!!!
 
 ---
 
-## Part 11: Adding yet another route
+## Part 11: Adding yet another page
 We've gone through this a few times now, so I'd suggest before reading this section in full that you attempt the following task first. I'll detail how it's done after, but if you're up for the challenge attempt the following...
 
 - Create a `threads.twig` page template that `extends` `base.twig`
