@@ -834,7 +834,7 @@ In your `base.twig` file – in the `<body>` tag, but before the `content` block
 
 Save your `base.twig` file, and re-visit any page on your site.
 
-Keeping in mind that we haven't written any CSS for our application yet, you should see your new navigation rendered on all of the pages in your application. This is because every page we've created `extends` our `base.twig` file. So, we've only had to inlcude the `navigation.twig` file there, and it's inherited by all of them.
+Keeping in mind that we haven't written any CSS for our application yet, you should see your new navigation rendered on all of the pages in your application (with functional links). This is because every page we've created `extends` our `base.twig` file. So, we've only had to inlcude the `navigation.twig` file there, and it's inherited by all of them.
 
 Pretty sweet, huh?!?!
 
