@@ -48,6 +48,10 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Creating our thread detail page](#creating-our-thread-detail-page)
     - [The lifecycle of path parameters](#the-lifecycle-of-path-parameters)
 - [Part 13: Building our navigation](#part-13-building-our-navigation)
+    - [Twig includes](#twig-includes)
+    - [Creating the navigation partial](#creating-the-navigation-partial)
+    - [Including the navigation partial](#including-the-navigation-partial)
+- [Part 14: Making our navigation data driven](#part-14-making-our-navigation-data-driven)
 
 ---
 
@@ -777,4 +781,64 @@ But we're using **ONE ROUTE** for all IDs!!!
 ---
 
 ## Part 13: Building our navigation
+Alright, we've built a bunch of placeholder pages. Now it's time to add some navigation to our application, so we can navigate to these pages from any page in our application. But, as with other sections, there's a little bit of prerequisite knowledge to get out of the way.
+
+### Twig includes
+One of the key fundamental principles that I like to follow when writing my code is to keep it as readable as possible. A lot of this is accomplished by keeping functions as short as possible, other parts are handled by writing comments to explain what's going on, but that's all in Javascript. 
+
+What about HTML? Typically, if you want an HTML page to have a bunch of different sections, all of the markup for those sections has to be in a single HTML file. This ends up making your HTML code somewhat hard to navigate. It's easy to lose your spot, and it's easy to update the wrong line or the wrong block of code entirely.
+
+Twig – as you might expect by now – has a solution for this problem! It's the `include` keyword. 
+
+As we covered before, we can use a keyword in twig by wrapping it in curly brackets with percent signs inside. We've done this with the `block` keyword (`{% block title %}`) and with the `extends` keyword (`{% extends 'base.twig' %}`). In both of these scenarios, the keyword followed by an argument associated with the keyword. For `block`, it's the name of the block, and for `extends`, it's the name of the file you'd like to extend.
+
+With the `include` keyword, we provide it the name of the file we'd like to include in another file (relative to `views` directory). This keyword allows us to break our HTML into "partials" (specific sections of an HTML page), and include them in other pages without having to write all of the HTML in a single file.
+
+Let's put that concept in action for our navigation.
+
+### Creating the navigation partial
+In the `src/views` folder, create a new folder called `partials`. Inside of _that_ folder, create a new file named `navigation.twig`.
+
+In the `navigation.twig` file, add the following HTML:
+
+```twig
+<nav class="forum-nav">
+    <ul class="nav-items">
+        <li class="nav-item">
+            <a href="/">Home</a>
+        </li>
+        <li class="nav-item">
+            <a href="/threads">Threads</a>
+        </li>
+        <li class="nav-item">
+            <a href="/new-thread">
+                <button class="nav-button">
+                    New thread
+                </button>
+            </a>
+        </li>
+    </ul>
+</nav>
+```
+
+Save this file.
+
+### Including the navigation partial
+Because our `include` keyword is expecting the twig template that we want to include _**relative to the views**_ folder, and we created a new folder for our partials, we'll need to provide it the argument of `partials/navigation`.
+
+In your `base.twig` file – in the `<body>` tag, but before the `content` block – add the following line of code:
+
+```twig
+{% include 'partials/navigation' %}
+```
+
+Save your `base.twig` file, and re-visit any page on your site.
+
+Keeping in mind that we haven't written any CSS for our application yet, you should see your new navigation rendered on all of the pages in your application. This is because every page we've created `extends` our `base.twig` file. So, we've only had to inlcude the `navigation.twig` file there, and it's inherited by all of them.
+
+Pretty sweet, huh?!?!
+
+---
+
+# Part 14: Making our navigation data driven
 Coming soon...
