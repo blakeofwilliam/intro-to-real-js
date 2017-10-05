@@ -1179,6 +1179,8 @@ Now, in the `scripts` object in `package.json`, we just need to add the followin
 
 This might not look as easy as our `nodemon index.js`, but this is because any `npm` package that's installed as a dependency of your project that typically offers up a CLI – rather than being `required` in a JS file – is added to the `node_modules/.bin` directory. So, in order to use our project's local copy of `nodemon`, we need to reference it from `node_modules/.bin/nodemon`.
 
+Now, if you run `npm start` in your Terminal, it's just a shortcut for `nodemon index.js`!
+
 Phew...
 
 Now we're ready to test this thing out...
