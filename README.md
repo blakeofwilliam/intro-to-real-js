@@ -1155,13 +1155,33 @@ So, what's this code do?
 
 **services.node.volumes**: This is how we create "pointers" _inside_ the container to files _outside_ the container; the format is similar to the ports section, but the relationship is `{machinePath}:{containerPath}`; in this case `.` represents our project directory – more specifically, the directory that houses our `docker-compose.yml` file – and the `/usr/src/app` represents where we want the pointer to be created inside the container; the value for `{containerPath}` is arbitrary; if we used `/app`, then our project code would be accessible inside the container at `/app`; we're just using `/usr/src/app` because it's a pretty common path to use in examples;
 
+
 _NOTE: be sure not to confuse the `{containerPath}` in this example with our `app.get(...)` path; these are two totally different concepts; in our `app.get(...)`, we're defining a path for our Node.js app to **listen** for; in our `docker-compose.yml` a service's `volumes` paths are referencing the **File System** itself_
 
 **services.node.working_dir**: This tells our container where to navigate to on startup before running any commands; since we're creating a pointer to our project directory at `/usr/src/app`, this is the value we're providing here; this means that on startup, the container will first be scoped to our project directory (through the pointer it has locally) and **then** it will execute commands to start the application
 
 I know all of that is a little dense, and there are a lot of new concepts in there, but let's take a break from all of that, save our `docker-compose.yml` file, kill any already running `nodemon` processes by opening the Terminal and hitting `ctrl + c`...
 
-Now we're ready to test this thing out.
+#### Before we can test
+As you may have noticed, the `command` property in our `node` service configuration is set to `npm start`, but the command we've been using up until now is `nodemon index.js`... So, what is `npm start`?
+
+In your `package.json`, you should see a property called `scripts`. This is set to an object. Currently, this should only contain a `test` property. This `scripts` property is a way for us to define common tasks that we run for our application and give them a corresponding `npm` command. 
+
+You might recall that, for the command we've been using (`nodemon index.js`), we used the `-g` flag to install `nodemon` globally on our machine. Unfortunately, our container will not have access to this tool. So, the best way to approach this problem is to now make `nodemon` a dependency of our project using the `--save` flag.
+
+Execute `npm install nodemon --save` in the Terminal. This will install `nodemon` in our `node_modules` folder instead of globally on our machine.
+
+Now, in the `scripts` object in `package.json`, we just need to add the following property before the `test` property:
+
+```json
+"start": "node_modules/.bin/nodemon index.js",
+```
+
+This might not look as easy as our `nodemon index.js`, but this is because any `npm` package that's installed as a dependency of your project that typically offers up a CLI – rather than being `required` in a JS file – is added to the `node_modules/.bin` directory. So, in order to use our project's local copy of `nodemon`, we need to reference it from `node_modules/.bin/nodemon`.
+
+Phew...
+
+Now we're ready to test this thing out...
 
 ### Testing our node app in Docker
 Now that we've saved our file, we can see what this all looks like in action. In the Terminal execute the `docker-compose up` command. 
