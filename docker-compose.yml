@@ -1,0 +1,16 @@
+version: '3'
+services:
+  node:
+    image: node:alpine
+    command: npm start
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/usr/src/app
+    working_dir: '/usr/src/app'
+  mongo:
+    image: mongo:3.0
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data/db:/data/db

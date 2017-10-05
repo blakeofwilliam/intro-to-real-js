@@ -61,6 +61,11 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Enabling static assets](#enabling-static-assets)
     - [Adding CSS to our base.twig](#adding-css-to-our-basetwig)
 - [Part 16: Setting up our database](#part-16-setting-up-our-database)
+    - [Docker overview](#docker-overview)
+    - [Configuring our docker-compose.yml file](#configuring-our-docker-composeyml-file)
+    - [Testing our node app in Docker](#testing-our-node-app-in-docker)
+    - [Adding MongoDB to our Docker environment](#adding-docker-to-our-docker-environment)
+- [Part 17: Creating our first model class](#part-17-creating-our-first-model-class)
 
 ---
 
@@ -1096,4 +1101,135 @@ That's it! Now we've wired up our CSS.
 ---
 
 ## Part 16: Setting up our database
+Now that we've stubbed out a basic application, all we need to do is build out some functionality for our threads, comments, users, etc. However, in order to make all of that work, we first need a place to store all of that information. We'll be storing it in MongoDB, but in order to do some prep work for this application eventually running on a remote web server, we'll want to ensure that as much of our live setup is reflected in our local development setup as posible.
+
+Part of this is making sure that connecting to our database is the same in both development and production. To replicate this setup, we'll be using something called [Docker](https://store.docker.com/editions/community/docker-ce-desktop-mac). We'll be covering what Docker is, and how we're going to use it, but before we do that go ahead and get Docker installed on your machine using the link provided.
+
+After you've installed Docker, run the command `which docker` in your Terminal to ensure that Docker has been properly installed. You should see something like this printed out in the terminal `/usr/local/bin/docker`. This is just the location of Docker's CLI on your machine, and it means that Docker is properly installed, and you can move on.
+
+### Docker overview
+So, to start with a little bit of background, traditionally in a production application it's a good practice to have a single machine be responsible for a single portion of your application. This means that you'd have one machine running your Node.js app, another machine running your database, and the first would connect to the second whenever data needs to be read or written to the database.
+
+The benefit of this setup is that if you need more resources for your database, you simply upgrade the database machine, and your Node.js machine can be left alone. The same applies to allocating resources to your Node.js machine. 
+
+This is all well and good, but we're running on a single computer (the one you own), so how do we accomplish the action of running these different parts of the application separately? We use Docker.
+
+Docker is a `container management tool`. What's meant by this is that Docker allows you to configure a bunch of separate "containers" for different portions of your application. It also allows you to define a "base image" for this container to run on, and add the code from your project to the container, mimicking the behavior of a separate machine for each portion of your application.
+
+Each "container" in your application is given its own IP address, and it has the ability to expose specific ports for requests coming from outside of the Docker environment. In our case, we're running our Node.js app on port `3000`. By default, once we "Dockerize" this portion of our application, we will no longer be able to access our app at `localhost:3000` unless we explicitely configure Docker to expose port `3000` on our Node.js container.
+
+Some of this is a pretty high level explanation of the concepts of Docker, so don't worry if it's still a little fuzzy. We'll get a better picture of what's going on as we dig into configuring Docker.
+
+### Configuring our docker-compose.yml file
+Alright, so let's start to Dockerize our application. In the root of your project folder, create a new file called `docker-compose.yml`. This configuration is written in a language called YAML. It's a lot like JSON or a Javascript object, except it uses indented lines instead of curly braces to nest objects and properties. Don't worry too much about what this means, because once you see it, it will make sense.
+
+In your `docker-compose.yml`, add the following code:
+
+```yaml
+version: '3'
+services:
+  node:
+    image: node:alpine
+    command: npm start
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/usr/src/app
+    working_dir: '/usr/src/app'
+```
+
+#### Configuration overview
+So, what's this code do?
+
+**version**: This is just a flag to tell docker what version of the docker-compose configuration we're using; the all have different support for specific features; `3` is the most recent
+
+**services**: This is the name of a property that will house all of the configurations for the different portions of our application; each of our "services" will be run in its own "container"
+
+    **node**: This is the name of our first "service"; it will be responsible for kicking off our `nodemon index.js` command (which we've been doing manually up until now)
+
+    **image**: This is the name of the "base image" that we'd like to have our container based on; using a base image allows us to include by default the technology that a given service uses; in this case, we're using the [official node image](https://hub.docker.com/_/node/), which installs `node` and `npm` in our container, so that our application will run properly
+
+    **command**: This is the command used to start our Node.js application; when the container starts up, it will execute this command, so that our application is started right away; note that this is different from the `nodemon index.js` command we've been using... we'll get back to that in a minute.
+
+    **ports**: This is the part we went over before; in order to make port `3000` accessible outside of the container, we need to expose it to our machine using one of its ports; the format of this is `{machinePort}:{containerPort}` this `binds` all traffic going to the `machinePort` to the `containerPort` in such a way that when a request comes into `localhost:{machinePort}`, it's routed to `container:{containerPort}`... With this in mind, we could use `8000:3000`, and we would be able to access our application through `localhost:8000`; since our application is running on port `3000` inside of the container, and we'd be binding it to port `8000` outside of the container, the request would have to go to port `8000`
+
+    **volumes**: This is how we create "pointers" _inside_ the container to files _outside_ the container; the format is similar to the ports section, but the relationship is `{machinePath}:{containerPath}`; in this case `.` represents our project directory – more specifically, the directory that houses our `docker-compose.yml` file – and the `/usr/src/app` represents where we want the pointer to be created inside the container; the value for `{containerPath}` is arbitrary; if we used `/app`, then our project code would be accessible inside the container at `/app`; we're just using `/usr/src/app` because it's a pretty common path to use in examples;
+
+    _NOTE: be sure not to confuse the `{containerPath}` in this example with our `app.get(...)` path; these are two totally different concepts; in our `app.get(...)`, we're defining a path for our Node.js app to **listen** for; in our `docker-compose.yml` a service's `volumes` paths are referencing the **File System** itself_
+
+    **working_dir**: This tells our container where to navigate to on startup before running any commands; since we're creating a pointer to our project directory at `/usr/src/app`, this is the value we're providing here; this means that on startup, the container will first be scoped to our project directory (through the pointer it has locally) and **then** it will execute commands to start the application
+
+I know all of that is a little dense, and there are a lot of new concepts in there, but let's take a break from all of that, save our `docker-compose.yml` file, kill any already running `nodemon` processes by opening the Terminal and hitting `ctrl + c`...
+
+Now we're ready to test this thing out.
+
+### Testing our node app in Docker
+Now that we've saved our file, we can see what this all looks like in action. In the Terminal execute the `docker-compose up` command. 
+
+It will  take a minute, but you should see some output that looks like this:
+
+```bash
+Creating network "introtorealjs_default" with the default driver
+Pulling node (node:alpine)...
+alpine: Pulling from library/node
+88286f41530e: Pull complete
+d0e8a23136b3: Pull complete
+5ad5b12a980e: Pull complete
+Digest: sha256:60cd58a7a2bd9fec161f53f8886e451f92db06b91f4f72d9188eeea040d195eb
+Status: Downloaded newer image for node:alpine
+Creating introtorealjs_node_1 ...
+Creating introtorealjs_node_1
+Attaching to introtorealjs_node_1
+node_1   | npm info it worked if it ends with ok
+node_1   | npm info using npm@5.3.0
+node_1   | npm info using node@v8.6.0
+node_1   | npm info lifecycle intro-to-real@1.0.0~prestart: intro-to-real@1.0.0
+node_1   | npm info lifecycle intro-to-real@1.0.0~start: intro-to-real@1.0.0
+node_1   |
+node_1   | > intro-to-real@1.0.0 start /usr/src/app
+node_1   | > nodemon index.js
+node_1   |
+node_1   | [nodemon] 1.12.1
+node_1   | [nodemon] to restart at any time, enter `rs`
+node_1   | [nodemon] watching: *.*
+node_1   | [nodemon] starting `node index.js`
+node_1   | App is listening on localhost:3000...
+```
+
+Once you see the `App is listening on localhost:3000...` message in the terminal, the app is running inside the container. Now you can test it out again in the browser. Everything should look the same. The key difference is that now our Node.js app is running in a Docker container that we configured ourselves!
+
+If that's all looking good, let's move on to adding another container for our database: MongoDB.
+
+### Adding MongoDB to our Docker environment
+In the root of your project folder, create a new folder called `data`. Inside of that folder, create another folder called `db`.
+
+In the `docker-compose.yml` – after the `node` service configuration, but indented to be nested inside of the `services` property – add the following service configuration:
+
+```yaml
+mongo:
+  image: mongo:3.0
+  ports:
+    - 27017:27017
+  volumes:
+    - ./data/db:/data/db
+```
+
+There's much less configuration needed for this, since we're going to let the MongoDB use primarily defaults. The only thing we need to do is define what `image` we want to use (we're using the [official MongoDB 3.0 image](https://hub.docker.com/_/mongo/)), what `ports` we want to expose (by default, MongoDB starts up listening on port `27017`, so we're going to use that), and where to store the data that's written to our database (by default, MongoDB writes to `/data/db`, so we create a pointer inside the container that's mapped to `./data/db` which is the new folder(s) we just created in our project folder).
+
+With all of that out of the way, save the `docker-compose.yml` file, and in the Terminal, hit `ctrl + c` to stop our Docker process. 
+
+Now run `docker-compose up` again in the Terminal.
+
+You should see a bunch of crazy output again, and eventually the `App is listening on localhost:3000...`
+
+If this is the case, we're good to go. We've configured our two containers. We'll revisit Docker as we take advantage of some of the key features it offers, but for now just pat yourself on the back for getting through one of the more dense sections so far!!!
+
+---
+
+## Part 17: MongoDB review
+Coming soon...
+
+---
+
+## Part 18: Creating our first model class
 Coming soon...
