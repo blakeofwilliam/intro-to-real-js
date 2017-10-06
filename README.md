@@ -2,6 +2,9 @@
 This is a basic project to demonstrate a more common real-world workflow for Javascript development on both the client and server side.
 
 ## Table of contents
+- [Part 0: Setting up your machine for development](#part-0-setting-up-your-machine-for-development)
+    - [Applications & Extensions](#applications-extensions)
+    - [Command line tools](#command-line-tools)
 - [Part 1: Using npm for dependencies](#part-1-using-npm-for-dependency-management)
     - [node.js overview](#nodejs-overview)
     - [npm overview](#npm-overview)
@@ -31,7 +34,7 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
 - [Part 7: The power of templates and view engines](#part-7-the-power-of-templates-and-view-engines)
     - [Twig loops](#twig-loops)
     - [Twig extends](#twig-extends)
-- [Part 8: Creating our base.twig file](#part-8-creating-our-basetwig-file)    
+- [Part 8: Creating our base.twig file](#part-8-creating-our-basetwig-file)
     - [Defining extendable blocks](#defining-extendable-blocks)
     - [Extending our new base.twig file](#extending-our-new-basetwig-file)
     - [Rendering our new home page](#rendering-our-new-home-page)
@@ -69,11 +72,31 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
 
 ---
 
+## Part 0: Setting up your machine for development
+Before we start developing anything, we need to install some applications and command line tools.
+
+### Applications & Extensions
+For code editing, we'll be using [Visual Studio Code](https://code.visualstudio.com/download). Download and install it, start it up to make sure it's working, and then install the following list of Extensions for VSCode.
+
+- [Terminal](https://marketplace.visualstudio.com/items?itemName=formulahendry.terminal)
+- [Twig](https://marketplace.visualstudio.com/items?itemName=whatwedo.twig)
+
+We'll also be using two Chrome Extensions called [Postman](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en-US) and [Postman Interceptor](https://chrome.google.com/webstore/detail/postman-interceptor/aicmkgpgakddgnaphhhpliifpcfhicfo?hl=en-US). Install both of those through the Chrome Web Store.
+
+### Command line tools
+The top level tool we'll be using in the command line (Terminal) will be [Homebrew](https://brew.sh/). Run the command on the Homebrew website – in the Terminal – to Install Homebrew.
+
+Once installed, use `brew install node` to install Node.js and `npm`. Be sure to run both `which node` and `which npm` after the install to ensure they were successfully installed.
+
+With all of that done, you should be ready to start developing!!!
+
+---
+
 ## Part 1: Using npm for dependency management
 node.js and npm go hand in hand with frontend, backend, and full-stack Javascript development. Nowadays, they're considered default knowledge requirements in most real-world Javascript projects. In this section, we'll review exactly what node.js and npm are and how they're used to build robust websites without having to build everything from scrath. This is done by utilizing the open-source community and its adoption of node.js and npm as a shared standard for package development, production, sharing, and inclusion in any given project.
 
 ### node.js overview
-So what is node.js? 
+So what is node.js?
 
 In order to fully understand this, there's a little bit of foundational Javascript history to wrap your head around. Javascript historically was considered a language that could (and should) only be run in the web browser. This served its purpose for a very long time, and resulted in some very light code that ran incredibly fast and accomplished incredibly complex tasks in very short periods of time. In short: Javascript became a very performant scripting language.
 
@@ -101,7 +124,7 @@ npm init
 
 After you run the `npm init` command, you will be given a set of prompts for information about the npm project you're initializing.
 
-**package name**: 
+**package name**:
 The name of your npm project. This can be any string without spaces. The value displayed in parentheses is the suggested value from npm. If you simply hit `enter` without providing your own value, then this value will be used instead.
 
 **version**:
@@ -130,7 +153,7 @@ Given that node.js and npm are central parts of the open-source community, this 
 
 After providing these values, you'll be shown the JSON configuration that is about to be written to your `package.json` file. You can hit `enter` to approve this.
 
---- 
+---
 
 ## Part 2: Using open-source npm packages in your code
 As mentioned before, the real benefit of npm in the case of Javascript development is that you can simply manage open-sourced projects and resources that other people have developed. There are two ways to include these dependencies in your project: with and without saving the dependency to your `package.json`. I suggest always saving your dependecies to your `package.json`, but I'll demonstrate both.
@@ -148,7 +171,7 @@ Before we actually use this new dependency, it's important to understand _how_ t
 
 As mentioned earlier on, node.js exposes to Javascript some previously unavailable functionality like access to the file system. This is actually incredibly useful in using our npm dependencies. There is a super complicated manner in which we could use this filesystem access to look into the `node_modules` directory and locate the `express` files we need in our project and eventually – after dozens of lines of code – we'd have access to the functions and classes included there.
 
-However, node.js has given us a much easier way to do this and it's a simple method called `require`. The require method takes a single argument. In this example, that argument we'll provide is simply the name of the dependency your want to use in your project. 
+However, node.js has given us a much easier way to do this and it's a simple method called `require`. The require method takes a single argument. In this example, that argument we'll provide is simply the name of the dependency your want to use in your project.
 
 That will look like this: `require('express');`. The output of this method is the dependency's exported Javascript code. That may not be completely clear at this point, but it will be very soon, I promise!
 
@@ -158,12 +181,12 @@ In your project folder, create a new file called `index.js`.
 In this file, add the following code:
 
 ```javascript
-// require the express package in this file 
+// require the express package in this file
 // and store it in a variable for later use
 const express = require('express');
 // create a new instance of `express`
 const app = express();
-// give our app some basic rules about what to 
+// give our app some basic rules about what to
 // do with a web request
 app.get('/', (request, response) => {
     response.send('I just configured a webserver!');
@@ -186,13 +209,13 @@ node index.js
 
 You should see a message in the terminal saying `App is listening on localhost:3000...`. If you see this, your webserver is running! You can visit [http://localhost:3000](http://localhost:3000) in your web browser and see your work in action.
 
---- 
+---
 
 ## Part 3: Express
 According to the Express website, it is a "fast, unopinionated, minimalist web framework for Node.js". All this means is that the creators of Express have developed a framework that houses all of the resources you'd need to build and serve your own web application. This includes – but is not limited to – a lot of the functionality traditionally handled by a specific HTTP Server like [Apache](https://httpd.apache.org/) or [Nginx](https://www.nginx.com/). The good news is: learning how to use express doesn't require any prerequisite knowlege of how these HTTP Servers typically work. However, it's good to lay down some foundational knowledge.
 
 ### HTTP Server overview
-HTTP is the abbreviation of "HyperText Transfer Protocol". For the sake of our upcoming examples, it's not completely necessary to fully understand what a "protocol" is other than that it's a sort of a set of guidelines around how two separate pieces of software communicate with each other. The HTTP Server is the implementation of the "HyperText Transfer" protocol in a piece of software. 
+HTTP is the abbreviation of "HyperText Transfer Protocol". For the sake of our upcoming examples, it's not completely necessary to fully understand what a "protocol" is other than that it's a sort of a set of guidelines around how two separate pieces of software communicate with each other. The HTTP Server is the implementation of the "HyperText Transfer" protocol in a piece of software.
 
 You may recognize the term "HyperText" from HTML (HyperText Markup Language). With that little bit of background, it's a short hop to deducing that HTTP is the implementation of a protocol that allows a web request to return website content. The protocol specifies how the information must be requested and how the responses are formed, so we have two important actors here: the HTTP Client (well known as Browser) and the HTTP Server.
 
@@ -203,7 +226,7 @@ In short terms, every time that you open your browser (HTTP Client) and you writ
 
 This relationship can be boiled down pretty plainly as what I like to call a "question and answer system". There are number of "questions" that an HTTP Client can ask an HTTP Server, but the most common you see when browsing the web is: "Is there any content available at this web address?" This is known as a `GET` request.
 
-Using the same example of the web browser, when you type in `google.com` in your address bar and hit `enter`, a couple of things take place. 
+Using the same example of the web browser, when you type in `google.com` in your address bar and hit `enter`, a couple of things take place.
 
 - The web browser (HTTP Client) sends out a question: "Is there any content available at the web address `google.com`?" in the for of a HTTP `GET` request
 - Some voodoo happens called a `DNS lookup` (we'll get there eventually) that basically is just a way for the internet to figure out what server has the listening HTTP Server for a given website
@@ -213,7 +236,7 @@ Using the same example of the web browser, when you type in `google.com` in your
 - In the case of a web browser, this content is then parsed and rendered as the web page that you see
 
 #### Important distinction
-One important thing to note is that an HTTP Server is not restricted to returning HTML content. In fact, an HTTP Server is also responsible for returning images, Javascript files, CSS files, etc. In fact when the HTML for a web page is sent to a web browser, every `<script>`, `<link>`, and `<img>` tag also results in a separate HTTP GET request to get the content for those files as well. 
+One important thing to note is that an HTTP Server is not restricted to returning HTML content. In fact, an HTTP Server is also responsible for returning images, Javascript files, CSS files, etc. In fact when the HTML for a web page is sent to a web browser, every `<script>`, `<link>`, and `<img>` tag also results in a separate HTTP GET request to get the content for those files as well.
 
 ### Request methods
 There is a pretty long list of what types of "questions" an HTTP Client can ask an HTTP Server. The way that the HTTP Client tells the HTTP Server what type of question it's asking is through something called an [HTTP Request Method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods). We've briefly covered the `GET` request method, but a more detailed list of the most commonly used request methods is as follows.
@@ -257,7 +280,7 @@ app.get('/', (request, response) => {
 ### The breakdown
 In this code snippet, we first initialize Express and store the result in a variable called `app`.
 
-Immediately after that, we start the process of configuring the HTTP Server. We use a method called `get` that is made available by Express. This method represents a `request method`. 
+Immediately after that, we start the process of configuring the HTTP Server. We use a method called `get` that is made available by Express. This method represents a `request method`.
 
 The method takes two arguments: the relative path of the request you're responding to and a callback method with the logic of how to respond.
 
@@ -311,7 +334,7 @@ This should give you something that looks like this:
     <title>Document</title>
 </head>
 <body>
-    
+
 </body>
 </html>
 ```
@@ -383,7 +406,7 @@ _Don't worry too much about the specifics of how we'll be using these technologi
 ---
 
 ## Part 6: Setting up twig.js
-Before we dig in, be sure to install the [Twig](https://marketplace.visualstudio.com/items?itemName=whatwedo.twig) extension for Visual Studio code. 
+Before we dig in, be sure to install the [Twig](https://marketplace.visualstudio.com/items?itemName=whatwedo.twig) extension for Visual Studio code.
 
 We'll circle back to what Twig is and how we'll use it in a little bit, but for now let's get twig added as a dependency and wired up to our express app.
 
@@ -400,7 +423,7 @@ npm install twig --save
 #### Configure your app to use twig as the view engine
 In order to use twig as our app's `view engine`, we need to configure our application a little using an Express method called `set`. The `set` method takes two arguments: the name of the configuration option, and the value of the configuration option.
 
-For our case, we only need to set the following two config options: 
+For our case, we only need to set the following two config options:
 
 **views**: the location of our `views` directory (the location of our template files); for this config option, we'll be leveraging the `__dirname` variable again
 
@@ -434,7 +457,7 @@ Since we've registered our `view engine` (twig) and the location of our `views` 
 Without having changed the content since renaming our old `index.html` file, this may seem kind of pointless, but I promise, this will pay off in the long run.
 
 #### Test our changes
-After saving the changes to your `index.js` file, restart your `node` process. You can do this in the terminal by hitting `ctrl + c` then re-running `node index.js`. 
+After saving the changes to your `index.js` file, restart your `node` process. You can do this in the terminal by hitting `ctrl + c` then re-running `node index.js`.
 
 Once this process has started up again, and you see the `App is listening on localhost:3000...` message, you can visit [http://localhost:3000](http://localhost:3000) in your browser, and you should see the same HTML you were seeing before... But this time, it's rendered by TWIG!!!
 
@@ -445,7 +468,7 @@ So, what exactly is the benefit of using templates and a view engine?
 
 Simply put, you'll never have to write the same HTML twice... ever! Twig as a view engine allows us to write some HTML, and place some "placeholders" for either variables that our application will be able to pass our template at render time, or even entire other blocks of HTML with their own variable placeholders.
 
-It also introduces to HTML the concept of **conditions** and **loops**. 
+It also introduces to HTML the concept of **conditions** and **loops**.
 
 ### Twig loops
 This means – for example – that you can provide your template an array of navigation items that looks like this:
@@ -526,7 +549,7 @@ This looks like this:
 {% endblock %}
 ```
 
-As you can see, we dont' have to re-declare the `<html>`, `<head>`, and `<body>` tags. They already exist in the `base.twig` file that's being extended. Once that's done, all that's required is that we add content to the `title` and `content` blocks that the `base.twig` file declares. 
+As you can see, we dont' have to re-declare the `<html>`, `<head>`, and `<body>` tags. They already exist in the `base.twig` file that's being extended. Once that's done, all that's required is that we add content to the `title` and `content` blocks that the `base.twig` file declares.
 
 This means that our pages don't need to re-define what a basic HTML page looks like in our app. It just extends our `base` template. And if anything about this `base` file changes, it's propogated throughout all of the pages that `extends` it.
 
@@ -543,7 +566,7 @@ The renaming is the easy part. Just right click on `src/views/index.twig` and ch
 The first thing we should think about is what we want to be extendable, and what we want to be constant throughout all of the pages in our app. It's safe to assume – as a starting point – that everything except for the page content and the content of the `<title>` tag in the `<head>` of our file will be shared.
 
 #### Block syntax breakdown
-The syntax of most twig keywords is to use curly brackts with percent signs as the start and stop of a twig statement (`{% keyword argument %}`). In this case, the `keyword` is `block`, and the only argument it needs is a name for the block (so that extending templates can reference this block directly when declaring content). 
+The syntax of most twig keywords is to use curly brackts with percent signs as the start and stop of a twig statement (`{% keyword argument %}`). In this case, the `keyword` is `block`, and the only argument it needs is a name for the block (so that extending templates can reference this block directly when declaring content).
 
 The second part of most keyword-based twig statements is an `end` statement. This is effectively a simple way to tell twig you're done with this twig statement. It usually follows the pattern of `end` followed by the keyword you used in your opening statement (in this case `block`), which gives us the `{% endblock %}` statement.
 
@@ -596,7 +619,7 @@ Add the following code to your `home.twig` file:
 {% endblock %}
 ```
 
-That's all we have to do to create a fully compliant HTML file now!!! The `home.twig` file extends the basic template of the `base.twig` file, and simply declares the unique content of this page in the pre-defined named `blocks` that the `base.twig` makes available to it. In this case, the `title` and `content` of the page. 
+That's all we have to do to create a fully compliant HTML file now!!! The `home.twig` file extends the basic template of the `base.twig` file, and simply declares the unique content of this page in the pre-defined named `blocks` that the `base.twig` makes available to it. In this case, the `title` and `content` of the page.
 
 ### Rendering our new home page
 So, now we have to render this thing! This part is pretty simple, actually. Since we've already configured our view engine to render twig files, we just need to update the file that's being rendered for the `/` route.
@@ -619,9 +642,9 @@ Since we configured our `views` option earlier to point to `__dirname + '/src/vi
 This is why we are calling `response.render(...)` with `pages/home` instead of just `home`.
 
 ### Checking our work
-After saving the changes to your `index.js` file, restart your `node` process. You can do this in the terminal by hitting `ctrl + c` then re-running `node index.js`. 
+After saving the changes to your `index.js` file, restart your `node` process. You can do this in the terminal by hitting `ctrl + c` then re-running `node index.js`.
 
-Once this process has started up again, and you see the `App is listening on localhost:3000...` message, you can visit [http://localhost:3000](http://localhost:3000) in your browser, and you should now see a page with a title of `Forum Madness - Home`, and page content of `Welcome to Forum Madness!!!`... If you inspect this page, you'll see that all of the scaffolding for this page is still there. The `<!doctype>`, `<html>`, `<head>`, and `<body>` tags are all in place as your would expect. 
+Once this process has started up again, and you see the `App is listening on localhost:3000...` message, you can visit [http://localhost:3000](http://localhost:3000) in your browser, and you should now see a page with a title of `Forum Madness - Home`, and page content of `Welcome to Forum Madness!!!`... If you inspect this page, you'll see that all of the scaffolding for this page is still there. The `<!doctype>`, `<html>`, `<head>`, and `<body>` tags are all in place as your would expect.
 
 The difference this time is, they came from our `base.twig` file via twig `extends`!
 
@@ -645,7 +668,7 @@ Using the same format as before – but with the `-g` flag instead of the `--sav
 npm install nodemon -g
 ```
 
-This will add a new CLI (command line interface) to our machine. You may not know it, but you've been using CLIs this whole time. Any program that is available via the terminal is known as a Command Line Interface. So, `npm` and `node` are both CLIs. 
+This will add a new CLI (command line interface) to our machine. You may not know it, but you've been using CLIs this whole time. Any program that is available via the terminal is known as a Command Line Interface. So, `npm` and `node` are both CLIs.
 
 Once you've run the `npm install` code for nodemon, you can kill your `node` process using `ctrl + c` in the terminal, and this time execut `nodemon index.js` in the terminal.
 
@@ -656,7 +679,7 @@ The difference this time is that nodemon will now monitor your `index.js` file f
 ---
 
 ## Part 10: Adding another page
-Now that we've set up a base.twig file to act as a wrapper for the rest of our pages, we can extend it for our new pages and add some new routes. The first of these will be pretty simple, since it's not very different from our `/` route. 
+Now that we've set up a base.twig file to act as a wrapper for the rest of our pages, we can extend it for our new pages and add some new routes. The first of these will be pretty simple, since it's not very different from our `/` route.
 
 ### The new thread page
 This route will be responsible for rendering the "new thread" page. For this reason, before we add the route to our `index.js` file, we'll need to create a new twig template for this page in our `views` directory. In the `src/views/pages` folder, create a new file, and name it `new-thread.twig`.
@@ -775,16 +798,16 @@ In the `content` `block`, add the following code:
 <p>The details of this thread will eventually go here...</p>
 ```
 
-Save the file. 
+Save the file.
 
 I know, there's some new syntax here as well. We're about to get to that.
 
 ### The lifecycle of path parameters
-As you may have noticed, a few things were different about this template and route. Firstly, we used this new `path parameter` idea. 
+As you may have noticed, a few things were different about this template and route. Firstly, we used this new `path parameter` idea.
 
 However, we also passed a new argument to the `response.render(...)` method. This was an object that looked like this `{ id: id }`. Because we stored our `id` path parameter in a constant variable called `id`, this is just an object that contains a single property called `id` where the value is the value passed through our path parameter. This object, when passed as the second argument of our `response.render(...)` method, is known as the `context`. This context is a way for use to pass data to our twig template, and – wherever we want that data – render it inline as part of our page's content.
 
-The way we did that in our twig file was to use `{{ id }}`. In twig templates, any time you wrap text in double curly brackets, it will look at the `context` object passed to the renderer, and replace this statement with the value of the context property with the same name. In this case, we passed `{ id: id }` as the `context` object. 
+The way we did that in our twig file was to use `{{ id }}`. In twig templates, any time you wrap text in double curly brackets, it will look at the `context` object passed to the renderer, and replace this statement with the value of the context property with the same name. In this case, we passed `{ id: id }` as the `context` object.
 
 If a user visits `/threads/1234`, then the `const id = request.params.id;` line will store `1234` in the `id` variable. This value then gets passed to the `response.render(...)` method in the `context` object – with the property name `id` – as the second argument. The template then uses `{{ id }}` to place the value `1234` in the template, dynamically at render time.
 
@@ -798,11 +821,11 @@ But we're using **ONE ROUTE** for all IDs!!!
 Alright, we've built a bunch of placeholder pages. Now it's time to add some navigation to our application, so we can navigate to these pages from any page in our application. But, as with other sections, there's a little bit of prerequisite knowledge to get out of the way.
 
 ### Twig includes
-One of the key fundamental principles that I like to follow when writing my code is to keep it as readable as possible. A lot of this is accomplished by keeping functions as short as possible, other parts are handled by writing comments to explain what's going on, but that's all in Javascript. 
+One of the key fundamental principles that I like to follow when writing my code is to keep it as readable as possible. A lot of this is accomplished by keeping functions as short as possible, other parts are handled by writing comments to explain what's going on, but that's all in Javascript.
 
 What about HTML? Typically, if you want an HTML page to have a bunch of different sections, all of the markup for those sections has to be in a single HTML file. This ends up making your HTML code somewhat hard to navigate. It's easy to lose your spot, and it's easy to update the wrong line or the wrong block of code entirely.
 
-Twig – as you might expect by now – has a solution for this problem! It's the `include` keyword. 
+Twig – as you might expect by now – has a solution for this problem! It's the `include` keyword.
 
 As we covered before, we can use a keyword in twig by wrapping it in curly brackets with percent signs inside. We've done this with the `block` keyword (`{% block title %}`) and with the `extends` keyword (`{% extends 'base.twig' %}`). In both of these scenarios, the keyword followed by an argument associated with the keyword. For `block`, it's the name of the block, and for `extends`, it's the name of the file you'd like to extend.
 
@@ -858,7 +881,7 @@ Pretty sweet, huh?!?!
 Our navigation template is nice. It gives us a way to isolate that portion of our application and edit it in one place. But, believe it or not, there's still more repeat code than there should be. However, as usual, before we dig into fixing that, there's some prerequisite knowledge required to make it all make sense.
 
 ### Twig for loops
-We've seen how twig allows us to isolate code for the purpose of reuse in multiple files, but what if we have a specific element that we want to render once for ever element in a data set? This is where the `for` keyword comes in handy. 
+We've seen how twig allows us to isolate code for the purpose of reuse in multiple files, but what if we have a specific element that we want to render once for ever element in a data set? This is where the `for` keyword comes in handy.
 
 The key difference between the `for` keyword and the others we've used so far is that the `for` keyword is also accompanied by the `in` keyword. This is pretty much _always_ going to be the case when using the `for` keyword. The basic syntax is `{% for item in dataSet %}...{% endfor %}` where `item` is a temporary variable name for each item in a data set and `dataSet` is the item you're iterating over with your `for` loop.
 
@@ -1110,7 +1133,7 @@ After you've installed Docker, run the command `which docker` in your Terminal t
 ### Docker overview
 So, to start with a little bit of background, traditionally in a production application it's a good practice to have a single machine be responsible for a single portion of your application. This means that you'd have one machine running your Node.js app, another machine running your database, and the first would connect to the second whenever data needs to be read or written to the database.
 
-The benefit of this setup is that if you need more resources for your database, you simply upgrade the database machine, and your Node.js machine can be left alone. The same applies to allocating resources to your Node.js machine. 
+The benefit of this setup is that if you need more resources for your database, you simply upgrade the database machine, and your Node.js machine can be left alone. The same applies to allocating resources to your Node.js machine.
 
 This is all well and good, but we're running on a single computer (the one you own), so how do we accomplish the action of running these different parts of the application separately? We use Docker.
 
@@ -1165,7 +1188,7 @@ I know all of that is a little dense, and there are a lot of new concepts in the
 #### Before we can test
 As you may have noticed, the `command` property in our `node` service configuration is set to `npm start`, but the command we've been using up until now is `nodemon index.js`... So, what is `npm start`?
 
-In your `package.json`, you should see a property called `scripts`. This is set to an object. Currently, this should only contain a `test` property. This `scripts` property is a way for us to define common tasks that we run for our application and give them a corresponding `npm` command. 
+In your `package.json`, you should see a property called `scripts`. This is set to an object. Currently, this should only contain a `test` property. This `scripts` property is a way for us to define common tasks that we run for our application and give them a corresponding `npm` command.
 
 You might recall that, for the command we've been using (`nodemon index.js`), we used the `-g` flag to install `nodemon` globally on our machine. Unfortunately, our container will not have access to this tool. So, the best way to approach this problem is to now make `nodemon` a dependency of our project using the `--save` flag.
 
@@ -1186,7 +1209,7 @@ Phew...
 Now we're ready to test this thing out...
 
 ### Testing our node app in Docker
-Now that we've saved our file, we can see what this all looks like in action. In the Terminal execute the `docker-compose up` command. 
+Now that we've saved our file, we can see what this all looks like in action. In the Terminal execute the `docker-compose up` command.
 
 It will  take a minute, but you should see some output that looks like this:
 
@@ -1238,7 +1261,7 @@ mongo:
 
 There's much less configuration needed for this, since we're going to let the MongoDB use primarily defaults. The only thing we need to do is define what `image` we want to use (we're using the [official MongoDB 3.0 image](https://hub.docker.com/_/mongo/)), what `ports` we want to expose (by default, MongoDB starts up listening on port `27017`, so we're going to use that), and where to store the data that's written to our database (by default, MongoDB writes to `/data/db`, so we create a pointer inside the container that's mapped to `./data/db` which is the new folder(s) we just created in our project folder).
 
-With all of that out of the way, save the `docker-compose.yml` file, and in the Terminal, hit `ctrl + c` to stop our Docker process. 
+With all of that out of the way, save the `docker-compose.yml` file, and in the Terminal, hit `ctrl + c` to stop our Docker process.
 
 Now run `docker-compose up` again in the Terminal.
 
