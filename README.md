@@ -1299,7 +1299,35 @@ So, in our case, it would make sense to have a collection for `threads`, `commen
 
 Another side effect of using a database that has a JSON-based `document` model is that it's basically a 1-to-1 relationship between the Javascript objects we'll be using in our Node.js code and the actual data in the database. Traditionally, with SQL databases, a good deal of manipulation and transformation was required to turn a SQL `record` (the SQL version of a `document`) into a JSON object. Using a JSON-based document database like MongoDB removes this layer of complexity and makes it easier to get up and running in Node.js.
 
-More to come...
+### Adding the MongoDB package as a dependency
+In order to read and write data from our new MongoDB database, we're going to be using the official MongoDB `npm` package. It's called... [mongodb](https://www.npmjs.com/package/mongodb). Run `npm install mongodb --save` in the Terminal to install mongodb as a dependency for our project.
+
+### Adding some test data
+Before we get too far into using this package, we should probably get some test data added to our database, so we can make sure everything is tested against actual data.
+
+Launch Robo 3T and connect to your database (if you're not already). Toggle open your `forum_madness` database and right click on the `Collections` folder. Choose `Create Collection...` For `Collection Name` enter `users` and click `Create`. You should now see a new item inside of the `Collections` folder with an icon that looks like a sheet of grid paper and the label `users`. You've just created your first MongoDB collection! Pretty simple, eh?
+
+Right click on the `users` collection and choose `Insert Document`. This is going to be a user account for you to use as a test case for the Javascript we'll write into our node application to fetch data from the database. But, it's not just test data, so we should probably decide on what information we actually need about our users...
+
+Since a `document` is effectively just a Javascript Object, we can define our user in these terms...
+
+```javascript
+{
+    email: 'email@example.com',
+    first_name: 'Johnny',
+    last_name: 'Appleseed',
+    username: 'exampleuser',
+    password: 'testing',
+    threads: [],
+    comments: []
+}
+```
+
+This should be enough to get us started on the node side. Enter the JSON object above in the `Insert Document` dialog, and click `Save`. If you right click on the `users` collection and choose `View Documents`, you should now see a list of all documents in this collection, which should only be one. If you toggle this document open – using the little triangle on the left of the row containing the `ObjectId(...)` string, you should see all of the properties we just defined.
+
+You may notice that MongoDB automatically created an `_id` property on this user document. This is a unique identifier for this user document that we can use to find the user. This `_id` property will be added to every document that is added to our database's collections, and MongoDB does the work of ensuring that this is a unique value.
+
+Alright. It's time to start writing some Javascript to connect and read from MongoDB!
 
 ---
 

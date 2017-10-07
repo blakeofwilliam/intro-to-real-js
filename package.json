@@ -11,6 +11,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "express": "^4.16.1",
+    "mongodb": "^2.2.31",
     "nodemon": "^1.12.1",
     "twig": "^1.10.5"
   }
