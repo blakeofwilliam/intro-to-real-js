@@ -68,7 +68,8 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Configuring our docker-compose.yml file](#configuring-our-docker-composeyml-file)
     - [Testing our node app in Docker](#testing-our-node-app-in-docker)
     - [Adding MongoDB to our Docker environment](#adding-docker-to-our-docker-environment)
-- [Part 17: Creating our first model class](#part-17-creating-our-first-model-class)
+- [Part 17: MongoDB](#part-17-mongodb)
+    - [Configuring a connection in Robo 3T](#configuring-a-connection-in-robo-3t)
 
 ---
 
@@ -1271,8 +1272,34 @@ If this is the case, we're good to go. We've configured our two containers. We'l
 
 ---
 
-## Part 17: MongoDB review
-Coming soon...
+## Part 17: MongoDB
+In a second, we'll cover some basic MongoDB concepts, however, we'll need a MongoDB client that will allow us to connect to our MongoDB database, manage users and data, and see exactly what it is we're working with. That client is [Robo 3T](https://robomongo.org/download) (formerly Robomongo). Although MongoDB offers a pretty useful CLI that you can do pretty much everything from directly, having a proper user interface to view and manage your data is sometimes a little more convenient.
+
+Once you've installed Robo 3T, open it, and we can configure our connection to MongoDB.
+
+### Configuring a connection in Robo 3T
+Once you open Robo 3T, you'll be prompted with a window titled `MongoDB Connections`. At the top of this window, there are a few links to perform some actions to manage your connections. Click `Create`. 
+
+For the `Name` enter `Forum Madness`; and ensure that the `Address` boxes are populated with `localhost` and `27017`. Before clicking the `Save` button on the bottom right, click the `Test` button on the bottom left. This will ensure that the connection is configured properly. You should get a little popup window that says `Connected to localhost:27017` and `Access to database is available`. Click `Close`, then click `Save`.
+
+You're connection is configured! Now you can click the `Connect` button to use your new database connection.
+
+In the left hand side bar, you should see a little computer icon with `Forum Madness (1)` next to it. Below that should be a folder called `System`. Right click on the `Forum Madness (1)` label and choose `Create Database`.
+
+For the `Database Name` enter `forum_madness` and click `Create`. You should now see a little "database" icon (looks like a stack of three metal pancakes) with the label `forum_madness`. You've just created your first MongoDB database!!! Easy, right?
+
+Now we just need to create a new user, so that we can use our node app to connect to this new database. Toggle open the `forum_madness` database, and right click on the `Users` folder. Choose the `Add User...` option.
+
+For `Name` enter `fm_node`, for `Password` enter `fm_node`, check all of the checkboxes (this will give our user full permissions to the database), leave `UserSource` empty, then click `Save`. Now we're all set up for the work we'll be doing later.
+
+### MongoDB overview
+MongoDB is a `noSQL Database`. This just means that it uses a different format of storage than a traditional `SQL` database. Traditional SQL databases use a `relational` table structure, where every type of data you want to store is in a `table`, and in order to form relationships between two tables, a lot of configuration is required. noSQL databases do away with this complexity by using a different approach to storing data. In the case of MongoDB, our data is broken up into `collections` and `documents`. The key part of this is the _**type**_ of document... It uses JSON (Javascript Object Notation) documents. What this means is that every `document` in our database is just a Javascript Object. And a collection is just a group of JSON `documents` that have the same type of data.
+
+So, in our case, it would make sense to have a collection for `threads`, `comments`, and `users`, since these will all be expected to have different properties in their respective `documents`.
+
+Another side effect of using a database that has a JSON-based `document` model is that it's basically a 1-to-1 relationship between the Javascript objects we'll be using in our Node.js code and the actual data in the database. Traditionally, with SQL databases, a good deal of manipulation and transformation was required to turn a SQL `record` (the SQL version of a `document`) into a JSON object. Using a JSON-based document database like MongoDB removes this layer of complexity and makes it easier to get up and running in Node.js.
+
+More to come...
 
 ---
 

@@ -41,26 +41,22 @@ function buildContext(ctx) {
 // do with a web request
 app.get('/', (request, response) => {
     const context = buildContext();
-
     response.render('pages/home', context);
 });
 
 app.get('/new-thread', (request, response) => {
     const context = buildContext();
-
     response.render('pages/new-thread', context);
 });
 
 app.get('/threads', (request, response) => {
     const context = buildContext();
-
     response.render('pages/threads', context);
 });
 
 app.get('/threads/:id', (request, response) => {
     const id = request.params.id;
     const context = buildContext({ id: id });
-
     response.render('pages/thread-detail', context);
 });
 
