@@ -1,8 +1,10 @@
 // require the express package in this file 
 // and store it in a variable for later use
 const express = require('express');
+
 // create a new instance of `express`
 const app = express();
+
 // Configure application
 app.set('views', __dirname + '/src/views');
 app.set('view engine', 'twig');
@@ -58,6 +60,13 @@ app.get('/threads/:id', (request, response) => {
     const id = request.params.id;
     const context = buildContext({ id: id });
     response.render('pages/thread-detail', context);
+});
+
+app.get('/api/database', (request, response) => {
+    const MongoDB = require('./app/util/MongoDB');
+    const db = new MongoDB();
+
+    response.send('OK');
 });
 
 app.use('/assets', express.static('src'));

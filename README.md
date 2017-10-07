@@ -70,6 +70,14 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Adding MongoDB to our Docker environment](#adding-docker-to-our-docker-environment)
 - [Part 17: MongoDB](#part-17-mongodb)
     - [Configuring a connection in Robo 3T](#configuring-a-connection-in-robo-3t)
+    - [MongoDB overview](#mongodb-review)
+    - [Adding the MongoDB package as a dependency](#adding-the-mongodb-package-as-a-dependency)
+    - [Adding some test data](#adding-some-test-data)
+- [Part 18: Creating our first Javascript class](#part-18-creating-our-first-javascript-class)
+    - [Stubbing out our MongoDB class](#stubbing-out-our-mongodb-class)
+    - [Instantiating our class](#instantiating-our-class)
+    - [The new keyword](#the-new-keyword)
+- [Part 19: Creating our first class method](#part-19-creating-our-first-class-methods)
 
 ---
 
@@ -1333,5 +1341,79 @@ Alright. It's time to start writing some Javascript to connect and read from Mon
 
 ---
 
-## Part 18: Creating our first model class
+## Part 18: Creating our first Javascript class
+Classes are the basis of Object Oriented Programming. Much like functions, they allow you to create reusable code that can serve the purpose of driving more than one part of your application. However, unlike functions, they allow you to create a group of functions that are all registered together as a part of an `instance` of your `class`. Along side that, it allows for a built-in function that will be run any time you `initialize` an `instance` of your class. This built-in function is called the `constructor`. Any time you initialize an instance of your class, Javascript will invoke your class' `constructor` function (if one is defined).
+
+The way you define a class is pretty simple. Much like a function, it entails a keyword and a name. 
+
+Where a function definition typically look like this `function myFunction(param1, param2) {...}`; using the `function` keyword, then a name for your function, some arguments that the function accepts, and then curly brackets surrounding the code to run when your function is invoked... 
+
+A class definition looks like this `class MyClass {...}`; using the `class` keyword, then a name for your class, and curly brackets surrounding the code that makes up your class. The class that we'll be writing first will be sort of a "utility" class for our database connection, reading of data, and writing of data. So, using what we just covered, let's start stubbing it out.
+
+### Stubbing out our MongoDB class
+In your project root, add a folder called `app`. Inside of that folder add another folder called `util`, and inside of that folder create a file called `MongoDB.js`. Since this class is more of a "utility" function to be used by other classes, we'll store it in the `app/util` folder. Just an organizational benefit.
+
+In your new `MongoDB.js` file add the following code:
+
+```javascript
+const MongoClient = require('mongodb').MongoClient;
+
+class MongoDB {
+    constructor() {
+        this.client = MongoClient;
+    }
+}
+```
+
+This is a good starting point for us to see exactly how classes get uses in Javascript, but first a quick explanation of this code. 
+
+The `mongodb` npm package, when required, `exports` (we'll get to this in a little bit, but just know that it's what is returned by the `require(...)` function) a Javascript Object. This object contains a bunch of properties that are themselves Javascript Objects which have a number of properties which are functions... One of the parent properties in the `mongodb` exported object is `MongoClient`. This is exactly what it sounds like. It's a database client for connecting and making requests to MongoDB. As mentioned before, every class has a built-in `constructor()` function that Javascript will invoke any time an instance of this class is initialized. This is the perfect time for us to do some initial setup for variables that we're going to need later on.
+
+In the `constructor` of this class, we're simply creating a variable called `this.client` and assigning it to the previously required `MongoClient` object. I know that's all pretty dense, so... Let's see how this actually works in action and it will hopefully make sense.
+
+#### Instantiating our class
+Back in the `index.js`, we're going to add support for a new route. It's going to be for the `/api/database` route for the `GET` request method (from here on out, we'll assume that you know how to turn a statement like that into a proper `app.METHOD(PATH, CALLBACK)` call).
+
+In the callback of the `/api/database` GET route, add the following:
+
+```javascript
+const MongoDB = require('./app/util/MongoDB');
+const db = new MongoDB();
+
+response.send('OK');
+```
+
+Save your file, and make a request to `/api/database`. It should FAIL with an error message something like `MongoDB is not a constructor`. This is expected and is a very good opportunity to explain a concept when working with classes that is unique to Node.js. That's that funny little word `exports` that I mentioned earlier. In this example, we're actually using `require` in a way that we haven't before. We're using it to `require` **a file that we've written** as opposed to an npm package that we've installed as a dependency of our project. The way we tell the `require` function that we're looking for a local file is by starting the argument string with `./`. This tells `require` to start looking for a file beginning at our project root, and then following the path provided. In this case it's `app/util/MongoDB` (the location of our new class file).
+
+However, in node it's not enough to just write a Javascript file and `require` it. You need to explicitly tell `require` what this file `exports`. You do this by declaring – at the end of your file – `module.exports = SOMETHING_TO_EXPORT`. In this case, we want to export our MongoDB class, so we will add to the bottom of our `app/util/MongoDB.js` file `module.exports = MongoDB;` and save the file.
+
+Now when you make a request to `localhost:3000/api/database`, you should see the `OK` message. Also, in the terminal, you should see a couple of really large Javascript Objects logged. This is the result of our `console.log(...)` statements, and is just for debugging and demonstrating a key point. 
+
+If you scroll up to the beginning of this long log output, you'll see `MongoDB: class MongoDB {...` this is where we're using `console.log()` to log the value stored in `const MongoDB`. As you can see, adding `module.exports = MongoDB` to our file actually allowed `require(...)` to pull in our entire class definition. That's what gets logged out when we `console.log('MongoDB: ', MongoDB);`.
+
+Following the `MongoDB` class definition in the log, you should also see `db: MongoDB {...`. This is a log of what was created when we set `const db = new MongoDB()`. We'll get to that in the next section.
+
+Back to the code explanation...
+
+#### The new keyword
+In our callback, after we've successfully required `MongoDB`, we execute the code `const db = new MongoDB();`. This is leveraging a keyword that we've yet to see; the `new` keyword.
+
+The `new` keyword is a keyword use to tell Javascript that you want a new `instance` of a class. In short, if I created a class called `Person` that  – in the `constructor` – set the variable `this.country = 'USA';`, and then created two variables in the following manner:
+
+```javascript
+let travis = new Person();
+let blake = new Person();
+```
+
+What I'd be left with is two `instances` of `Person` that are pre-constructed with `this.country = USA`. In practice, these class instances behave a lot like Javascript Objects. They can store variables inside of themselves, they can house functions that live as properties on the instance, and they can be manipulated directly using the same dot notation (`console.log(travis.country);`).
+
+All of that is to say that – for the time being – all you really need to know is that when we call `const db = new MongoDB();` all we're doing is asking for a "copy" of the `MongoDB` class and storing that copy in a variable called `db`. That's all the `new` keyword does.
+
+Now that we've demonstrated that point, we're done with the `console.log(...)` calls in our `/api/database` route's callback. You can actually remove both the `console.log('MongoDB: ', MongoDB);` and the `console.log('db: ', db);` lines from your `/api/database` callback now.
+
+---
+
+# Part 19: Creating our first class methods
 Coming soon...
+
+---
