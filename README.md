@@ -1676,7 +1676,7 @@ This may still be a little fuzzy, but just to make progress, let's implement thi
 In the body of the `MongoDB` class' `connect()` function, add the following code.
 
 ```javascript
-return new Promise(() => {
+return new Promise((resolve, reject) => {
     this.client.connect(this.url, (err, db) => {
         if (err) {
             return reject(err);
