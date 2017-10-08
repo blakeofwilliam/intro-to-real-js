@@ -77,7 +77,10 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Stubbing out our MongoDB class](#stubbing-out-our-mongodb-class)
     - [Instantiating our class](#instantiating-our-class)
     - [The new keyword](#the-new-keyword)
-- [Part 19: Creating our first class method](#part-19-creating-our-first-class-methods)
+- [Part 19: Demystifying classes](#part-19-demystifying-classes)
+    - [Instance scope](#instance-scope)
+    - [Reviewing our MongoDB class](#reviewing-our-mongodb-class)
+- [Part 20: Writing our first custom class function](#part-20-writing-our-first-custom-class-function)
 
 ---
 
@@ -1413,7 +1416,101 @@ Now that we've demonstrated that point, we're done with the `console.log(...)` c
 
 ---
 
-# Part 19: Creating our first class methods
-Coming soon...
+## Part 19: Demystifying classes
+During the previous section, you may have noticed one very subtle difference in syntax for classes. The class that we created uses a built-in function called `constructor` to prepare some stuff whenever the class is "instantiated" with the `new` keyword. However, when we wrote that function, we didn't have to precede the name of the function with the `function` keyword. This is actually the convention in classes.
+
+Just to be clear, if I had this function standing on its own.
+
+```javascript
+function doubleNumber(num) {
+    return num * 2;
+}
+```
+
+And I wanted to add it to a `Math` class, that would look like this:
+
+```javascript
+class Math {
+    doubleNumber(num) {
+        return num * 2;
+    }
+}
+```
+
+As you can see, because the function now lives inside of a class, the preceding `function` keyword is no longer needed.
+
+### Instance scope 
+Earlier we covered very loosely what using the `new` keyword actually does, but this was more in general terms. Let's look at a couple more class concepts before we extend our class.
+
+Let's continue with with the Math class example just to demonstrate how both the built-in `constructor` function and our custom class functions work together to make classes incredibly robust.
+
+Traditionally, when calling a function, you can pass arguments to the function, and the function is responsible for accepting those arguments. The same is the case for classes, but the built-in `constructor` function is responsible for accepting arguments. The definition of the function is completely optional. If you do not declare a `constructor` function in your class – or if your constructor doesn't accept any arguments – any arguments that you initialize your class instances with will just be ignored.
+
+So, continuing with the `Math` example. Say the purpose of this `Math` class was to be able to create a variable for a given number that would then have the ability to run mathematical equations on itself. 
+
+An example of how we would want to use this class would be something like this:
+
+_**class implementation**_
+```javascript
+// Create a new instance of the `Math` class using the number 2
+let two = new Math(2);
+// Create a new instance of the `Math` class using the number 3
+let three = new Math(3);
+
+console.log(two.double()); // logs 4
+console.log(two.half()); // logs 1
+
+console.log(three.double()); // logs 6
+console.log(three.half()); // logs 1.5
+```
+
+In this example, our class would declare three functions: the built-in `constructor` function, a custom class function called `double`, and a custom class function called `half`.
+
+That would look like this.
+
+_**class definition**_
+```javascript
+class Math {
+    constructor(num) {
+        this.num = num;
+    }
+
+    double() {
+        return this.num * 2;
+    }
+
+    half() {
+        return this.num / 2;
+    }
+}
+```
+
+Notice that the `constructor` is responsible for accepting arguments on behalf of the class. What this implementation of the constructor function then does is store the `num` argument provided to our class as a property of the `this` object. The `this` object is a built-in keyword that, within the context of the class points to the current instance. This means that when the constructor is executed for `let two = new Math(2)`, the keyword `this` is pointing to a fresh "copy" of the `Math` class. And when the constructor for `let three = new Math(3)` is executed, the `this` keyword is pointing to a separate "copy" of the `Math` class. This means that the two resulting `this.num = num` assignments that will be executed by instantiating both `two` and `three` will **never** interfere with each other, because they're operating inside of separate copies (or "instances") of the `Math` class.
+
+For this reason, we can continue to reference `this` in our other functions without knowing anything about the specifics of the instance that will be executing the function. So when `double()` returns `this.num * 2`, the value of `this.num` will be specific to the instance that the method is being called on. This is why in the implementation example, we call these class functions not as `Math.double()`, but instead we reference the instance variables `two` and `three` directly; `two.double()` and `three.double()`.
+
+### Reviewing our MongoDB class
+So, with that background out of the way, we can now revisit our `MongoDB` utility class and get a better idea of what it's doing.
+
+```javascript
+const MongoClient = require('mongodb').MongoClient;
+
+class MongoDB {
+    constructor() {
+        this.client = MongoClient;
+    }
+}
+
+module.exports = MongoDB;
+```
+
+We can use our previous knowledge of `module.exports` to make a pretty safe assumption that, since we're able to assign our `MongoClient` variable to `require('mongodb').MongoClient`, the `mongodb` pakage is likely exporting a Javascript Object with at least one property (`MongoClient`). So, we're storinn the value of this property in a variable.
+
+Whenever a new instance of `MongoDB` is created, the `constructor` function will be executed, which will assign `MongoClient` to a new copy of `this.client` for this new instance.
+
+So far, that's all we're doing. Simple enough!
+
 
 ---
+## Part 20: Writing our first custom class function
+Coming soon...
