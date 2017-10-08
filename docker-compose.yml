@@ -3,6 +3,8 @@ services:
   node:
     image: node:alpine
     command: npm start
+    links:
+      - mongo
     ports:
       - 3000:3000
     volumes:

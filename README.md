@@ -1510,7 +1510,64 @@ Whenever a new instance of `MongoDB` is created, the `constructor` function will
 
 So far, that's all we're doing. Simple enough!
 
-
 ---
+
 ## Part 20: Writing our first custom class function
+One of the things that we'll be using the `client` property in our `MongoDB` class for is connecting to our MongoDB database. This will need to happen every time we read data from or write data to our database, so it's a good place to start.
+
+A mongodb "connection string" is the URL used to make the connection to your MongoDB database. The format of this url is `mongodb://USER:PASSWORD@HOSTNAME:PORT/DATABASE`. Since this data will be the same all the time, we can take advantage of our constructor to create a `this.url` property on every instance. We created our `fm_node` user and our `forum_madness` database already, so we're good there. Let's add some more constants to our `MongoDB.js` file.
+
+Before the actual class definition in your `MongoDB.js` file, add the following:
+
+```javascript
+const dbUser = 'fm_node';
+const dbPass = 'fm_node';
+const dbName = 'forum_madness';
+```
+
+We will use these variables to build our mongodb connection string in the constructor. But before we can do that, we need to resolve the `HOST`.
+
+### The Docker Compose links property
+We've already covered how to expose a port inside a given container to our computer with the `ports` property. But what we need to do is expose the `27017` port on our `mongo` container to **another container** (the `node` container), so that it can make a connection. This is done using the `links` property. And it's actually pretty straightforward.
+
+In your `docker-compose.yml` file, add a new property to the `node` service configuration with one "dashed" sub-item with the value `mongo`.
+
+Your updated `node` service configuration should look like this now:
+
+```yaml
+node:
+    image: node:alpine
+    command: npm start
+    links:
+      - mongo
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/usr/src/app
+    working_dir: '/usr/src/app'
+```
+
+What this `links` property does is allow us to make requests to our `mongo` container using the `host` name `mongo`. So, in our connection string, we'll be able to use this as the host.
+
+In your `MongoDB.js` file, let's add some more constants for the `dbHost` and `dbPort`.
+
+```javascript
+const dbHost = 'mongo';
+const dbPort = 27017;
+```
+
+### Adding our connection string url in our constructor
+Now we're ready to create our connection string url.
+
+In your `MongoDB` class' constructor function, add the following line:
+
+```javascript
+this.url = `mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}`;
+```
+
+This utilizes ES6 `template strings` to populate variables into a string directly without having to manually concatenate these string together using the `+` operator. All you have to do is place your "template string" in backticks, and wrap your variable name in curly brackets, preceded by a dollar sign. That looks like this: `${VARIABLE_NAME}`. This saves a lot of time when creating strings out of multiple variables; such as our current use case.
+
+Now that we have our connection string url property in our constructor, we can use this string to connect to our database.
+
+### Writing our connect function
 Coming soon...
