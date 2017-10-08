@@ -81,6 +81,12 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Instance scope](#instance-scope)
     - [Reviewing our MongoDB class](#reviewing-our-mongodb-class)
 - [Part 20: Writing our first custom class function](#part-20-writing-our-first-custom-class-function)
+    - [The Docker Compose links property](#the-docker-compose-links-property)
+    - [Adding our connection string url in our constructor](#adding-our-connection-string-url-in-our-constructor)
+    - [Stubbing our connect function](#stubbing-our-connect-function)
+    - [Intro to Promises](#intro-to-promises)
+    - [Finally writing our connect function](#finally-writing-our-connect-function)
+- [Part 21: Reading data](#part-21-reading-data)
 
 ---
 
@@ -1569,5 +1575,139 @@ This utilizes ES6 `template strings` to populate variables into a string directl
 
 Now that we have our connection string url property in our constructor, we can use this string to connect to our database.
 
-### Writing our connect function
+### Stubbing our connect function
+The process when performing any action pertaining to our mongodb database will basically follow the same set of procedures whether we're reading existing data, writing/updating data, or deleting data.
+
+The steps required are:
+
+- Establish a connection to the database
+- Perform database action
+- Close the connection to the database
+
+So, the first step to getting going with that is to write a function that will establish the connection to our mongodb database. The `MongoClient` object that we're using as our `this.client` property in the `MongoDB` class offers a function called `connect(...)` that does exactly this. This function takes two arguments; the connection string URL for the database we're connecting to (our `this.url` property), and a callback function after the database connection is attempted. The callback function takes two arguments; an `error` argument and a `database` argument. If the connection succeeds, the `error` argument will be `null` and the `database` argument will contain our database connection object. If the connection fails, the `error` argument will contain the error that caused the connection to fail, and the `database` argument will be `undefined`.
+
+The implementation of this function looks like this:
+
+```javascript
+MongoClient.connect(URL, (ERROR, DATABASE) => {
+    // Do something
+});
+```
+
+However, since we're storing `MongoClient` in our `this.client` property, ours will use that property to call the `connect(...)` function. For now, let's just stub out our `connect` function so we can get a lay of the land.
+
+In the `MongoDB.js` file, inside of your class definition (after the constructor function), add the following:
+
+```javascript
+connect() {
+
+}
+```
+
+We'll be filling this function with our call to `this.client.connect(...)`, but first we need a little more prerequisite knowledge.
+
+### Intro to Promises
+When writing more robust Javascript code, it's very common to come across scenarios where you're doing "procedural" tasks that have to be executed in order. However, not all of those tasks are guaranteed to execute in order, since some of them may be "asynchronous", meaning – they don't resolve when the task is executed, but when it completes. A really good example of this is the `this.client.connect(...)` function.
+
+Since there's no telling how long it's going to take for our application to establish a connection to the database (the network could suddenly slow down, the database itself could be busy processing some other request at the time we attempt the connection, etc...), some funny stuff happens in Javascript. Rather than halting all code from executing while our application establishes a connection (this would really slow things down), Javascript executes the request for a connection, then continues running our code. When the connection either fails or succeeds, then our callback is executed, and the `error` and `database` arguments are passed to the callback (now that they're available).
+
+What this traditionally means in Javascript programming is that if you want some tasks to happen in a specific order, you would have every task's function accept a callback, and you'd nest these calls inside of other callbacks.
+
+This is commonly referred to as "callback hell". And it looks like this:
+
+```javascript
+connect(url, (err, db) => {
+    // We've got a database connection...
+    // So find all users with the first name "Johnny"
+    db.users.find({ first_name: 'Johnny' }, (err, users) => {
+        // We've found some users...
+        // So update them all to have the last name "Appleseed"
+        users.update({ last_name: 'Appleseed' }, (err, users) => {
+            // We've finished updating users...
+            // So close the connection
+            db.close();
+        });
+    });
+});
+```
+
+As you can see, this code can get **really** sloppy and hard to read pretty easily, because each next step needs to happen in the callback of the previous step... It's horrible.
+
+Luckily, Javascript has implemented the concept of a `Promise`. A promis is a class who's constructor takes a function with two arguments; a function to execute when your task succeeds (commonly called `resolve`), and a function to execute when your task fails (commonly called `reject`). Inside of this function argument, you add the code that you want to execute for your task, and at the "success" point, you simply invoke the `resolve` function argument, and in the even of a failure, you invoke the `reject` function argument. Since `Promise` is a class, it's instantiated with the `new` keyword.
+
+Creating a new `Promise` that – for example – connects to our database, would end up looking something like this:
+
+```javascript
+new Promise((resolve, reject) => {
+    this.client.connect(this.url, (err, db) => {
+        if (err) {
+            return reject(err);
+        }
+
+        return resolve(db);
+    });
+});
+```
+
+All this does is define a function inside of the promise that calls the `this.client.connect(...)` function. Once the database connection either succeeds or fails, and that callback is executed, it uses the `resolve` and `reject` function arguments to execute the logical "next step" in our procedure.
+
+This might make little sense as to why this is helpful right now, but how this `Promise` gets used is where all of the magic happens.
+
+#### Using promises procedurally
+Suppose our `MongoDB` class' `connect(...)` function ends up returning a `Promise` like the one above. The way you can tell your `Promise` what the logical "next step" is, is with a function that exists on the `Promise` instance called `then(...)`. This function takes a function as an argument. This function is then passed to the `Promise` function as the `resolve` argument. The arguments of that function are completely flexible depending on what you plan to be passed to your `resolve(...)` invokation in the previous step.
+
+What's really nice about this approach is that you will **never** enter "callback hell".
+
+Again, assuming that our `MongoDB` class' `connect(...)` function returns a `Promise`, rather than having to do the "callback hell" approach, we can do something like this when using the `connect(...)` class function on a `MongoDB` instance.
+
+```javascript
+const db = new MongoDB();
+
+db.connect().then((db) => {
+    // do something with our database
+});
+```
+
+Since `db.connect(...)` returns a `Promise`, the `then(...)` function is made available immediately. This means we can define our next step immediately, and whenever the `Promise` "resolves", the code in the `then(...)` function argument will be executed.
+
+This may still be a little fuzzy, but just to make progress, let's implement this.
+
+### Finally writing our connect function
+In the body of the `MongoDB` class' `connect()` function, add the following code.
+
+```javascript
+return new Promise(() => {
+    this.client.connect(this.url, (err, db) => {
+        if (err) {
+            return reject(err);
+        }
+
+        return resolve(db);
+    });
+});
+```
+
+That's it for the `connect()` function. Let's use it in our `/api/database` route to see how it looks in action.
+
+In the `index.js` file, inside of your `/api/database` GET route, replace the `response.send('OK');` line with the following code:
+
+```javascript
+db.connect()
+    .then((db) => {
+        response.send('Connected!');
+    })
+    .catch((err) => {
+        response.status(500).send(err.message);
+    });
+```
+
+You can see that in addition to using the `then(...)` function, we're also using the `catch(...)` function. The exact same principles apply for this function (it takes a function argument with flexible arguments for that function), the only difference is that it's passed to your `Promise` function as the `reject` function argument. So, if you call `reject(err)`, then the function defined in `catch(...)` is executed.
+
+That's a fairly deep dive into Promises!
+
+So, let's test it. Save your files, and make a request to `/api/database`. You should see the text `Connected!`. If there was a problem connecting, you should see the error message for the problem.
+
+---
+
+## Part 21: Reading data
 Coming soon...

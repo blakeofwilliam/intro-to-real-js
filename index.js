@@ -66,7 +66,14 @@ app.get('/api/database', (request, response) => {
     const MongoDB = require('./app/util/MongoDB');
     const db = new MongoDB();
 
-    response.send('OK');
+    db.connect()
+        .then((db) => {
+            response.send('Connected!');
+        })
+        .catch((err) => {
+            response.status(500)
+                .send(err.message);
+        });
 });
 
 app.use('/assets', express.static('src'));
