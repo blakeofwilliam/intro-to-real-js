@@ -1,6 +1,7 @@
 // require the express package in this file 
 // and store it in a variable for later use
 const express = require('express');
+const ObjectID = require('mongodb').ObjectID;
 const MongoDB = require('./app/util/MongoDB');
 
 // create a new instance of `express`
@@ -80,6 +81,19 @@ app.get('/api/users', (request, response) => {
     const users = new MongoDB('users');
 
     users.find({})
+        .then((result) => {
+            response.json(result);
+        })
+        .catch((err) => {
+            response.status(500)
+                .send(err.message);
+        });
+});
+
+app.get('/api/users/:id', (request, response) => {
+    const users = new MongoDB('users');
+
+    users.findOne({ _id: ObjectID(request.params.id) })
         .then((result) => {
             response.json(result);
         })

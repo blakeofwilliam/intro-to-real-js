@@ -48,6 +48,27 @@ class MongoDB {
                 });
         });
     }
+
+    findOne(query) {
+        const { collection } = this;
+
+        return new Promise((resolve, reject) => {
+            this.connect()
+                .then((db) => {
+                    db.collection(collection)
+                        .findOne(query, (err, result) => {
+                            if (err) {
+                                return reject(err);
+                            }
+
+                            return resolve(result);
+                        });
+                })
+                .catch((err) => {
+                    reject(err);
+                });
+        });
+    }
 }
 
 module.exports = MongoDB;
