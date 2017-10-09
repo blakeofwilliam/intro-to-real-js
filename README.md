@@ -1560,6 +1560,8 @@ node:
 
 What this `links` property does is allow us to make requests to our `mongo` container using the `host` name `mongo`. So, in our connection string, we'll be able to use this as the host.
 
+Save your `docker-compose.yml` file and run `docker-compose restart` in the Terminal.
+
 In your `MongoDB.js` file, let's add some more constants for the `dbHost` and `dbPort`.
 
 ```javascript
