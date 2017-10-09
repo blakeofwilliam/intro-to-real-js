@@ -1710,4 +1710,128 @@ So, let's test it. Save your files, and make a request to `/api/database`. You s
 ---
 
 ## Part 21: Reading data
+There are two ways that MongoDB allows you to search for data. These approaches for searching for data are made available as methods on `collection` objects. The names of these methods are `find(...)` and `findOne(...)`.
+
+`find(...)` allows you to search for all documents in a collection that meet the search criteria passed to the function. The result of this search will be an array of document objects. In the event that only one document is found, the result will still be an array, but the array will only contain a single document object. In the event that no documents are found, the result will be an empty array.
+
+`findOne(...)` allows you to search for a single document in a collection that meets the search criteria passed to the function. The result of this search will be a single document object. In the event that no documents are found, the result will be `null`.
+
+In both cases, the first argument of these methods is the search criteria. This search criteria is passed in the form of a Javascript containing properties and values that you'd like to match in the database documents. For instance, if you wanted to find all documents in the `users` collection with the `first_name` property value of `Johnny`, your search criteria would look like this: `{ first_name: 'Johnny' }`.
+
+The second argument of the `findOne(...)` function is a callback function that accepts two arguments; an `error` argument, and a `result` argument. Much like the `MongoClient.connect(...)` function, the `error` argument will be `null` unless there was an error searching for or retrieving the document(s). In the event that the query was successful, the `result` argument will be the found document.
+
+In the case of the `find(...)` function, you need to explicitely translate the found documents list to a proper Javascript array. So, `find(...)` takes a single argument, and the returned value is an object that has a function property called `toArray(...)`. This function accepts the function to handle the `error` and `result`, and it follows the same rules detailed for the `findOne(...)` function argument.
+
+These implementations end up looking like this:
+
+```javascript
+// find
+COLLECTION.find(SEARCH_CRITERIA).toArray((err, result) => {
+    // do something
+});
+// findOne
+COLLECTION.findOne(SEARCH_CRITERIA, (err, result) => {
+    // do something
+});
+```
+
+### Writing the find function
+In order to make our `MongoDB` utility class flexible enough to handle all of our collections, we're going to first update our `constructor` to take the name of the collection that we'll be accessing data from. This way, for our `users` collection, we'll be able to instantiate like so: `new MongoDB('users')`. For our `threads` collection, we'll be able to instantiate like so: `new MongoDB('threads')`. And so on...
+
+Update the constructor function of the `MongoDB` class, to accept a single argument called `collection`. In the body of the constructor function, add an assignment to the `this` object: `this.collection = collection;`.
+
+The end result should look like this:
+
+```javascript
+constructor(collection) {
+    this.client = MongoClient;
+    this.url = `mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}`;
+    this.collection = collection;
+}
+```
+
+Now we're ready to write our new `find()` function. In the class definition for the `MongoDB` class, add a function called `find()` that accepts one argument called `query`. This `query` argument will be our search criteria. We'll, again be returning a `Promise` to make the process of using this function in a multi-step procedure a little more readable.
+
+Here's our code:
+
+```javascript
+find(query) {
+    const { collection } = this;
+
+    return new Promise((resolve, reject) => {
+        this.connect()
+            .then((db) => {
+                db.collection(collection)
+                    .find(query)
+                    .toArray((err, result) => {
+                        if (err) {
+                            return reject(err);
+                        }
+
+                        resolve(result);
+                        db.close();
+                    });
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    });
+}
+```
+
+So what this code is doing is returning a `Promise` that expects to execute the following procedure:
+
+- Connect to the database
+- Once the database connection resolves:
+    - Search for documents matching the passed `query` (search criteria)
+    - If there's an error, invoke the `reject` function with the `err` from the search
+    - If there's no error, invoke the `resolve` function with the `result` of the search
+    - Close the database connection
+
+So, this follows all of the rules of the list we wrote earlier for reading/writing/deleting database data.
+
+### Implementing the find function in a route
+Since we're going to be using our `MongoDB` class in more than one route at this point, we should do some cleanup to the `/api/database` route. In the `index.js` file, remove the `const MongoDB = require('./app/util/MongoDB');` line from the route's callback, and move it to the top of the file just after the `const express = ...` line. This will allow us to use the class in more than one route without having to `require()` it more than once.
+
+Now that that's out of the way, let's add a new GET route for the `/api/users` after the `/api/database` GET route. In the function argument of this new route, add the following code.
+
+```javascript
+const users = new MongoDB('users');
+
+users.find({})
+    .then((result) => {
+        response.json(result);
+    })
+    .catch((err) => {
+        response.status(500)
+            .send(err.message);
+    });
+```
+
+This now uses our new `find(...)` function that we added to the `MongoDB` class. It also utilizes the update to the constructor function to accept the name of the collection we'll be operating on.
+
+The `find(...)` function is called with an empty `query` object. This is the same as searching for "all documents" in the collection. The `then(...)` operation accepts the result of this query and uses `response.json()` to send this data as a JSON response back to the client. The `catch(...)` operation accepts any error (remember, this is executed as the `reject` argument in our `Promise`) and sends a response with a `500` status code (this means we encountered a server error while attempting to resolve the request) and the content of the response is the `message` property of the error object.
+
+Save your document and make a request to `/api/users`. You should get a response containing an array of all `users` documents in our database. At this point this should just be the one test document we added. Your `_id` field will be different from mine, but the response should look something like this:
+
+```json
+[
+    {
+        "_id": "59da90bf8dced62026fb914a",
+        "email": "email@example.com",
+        "first_name": "Johnny",
+        "last_name": "Appleseed",
+        "username": "exampleuser",
+        "password": "testing",
+        "threads": [],
+        "comments": []
+    }
+]
+```
+
+You just read data from a database with Node.js!!!
+
+---
+
+## Finding documents by id
 Coming soon...

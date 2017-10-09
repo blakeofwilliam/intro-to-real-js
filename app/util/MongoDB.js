@@ -7,9 +7,10 @@ const dbPass = 'fm_node';
 const dbName = 'forum_madness';
 
 class MongoDB {
-    constructor() {
+    constructor(collection) {
         this.client = MongoClient;
         this.url = `mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}`;
+        this.collection = collection;
     }
 
     connect() {
@@ -23,6 +24,28 @@ class MongoDB {
 
                 return resolve(db);
             });
+        });
+    }
+
+    find(query) {
+        const { collection } = this;
+
+        return new Promise((resolve, reject) => {
+            this.connect()
+                .then((db) => {
+                    db.collection(collection)
+                        .find(query)
+                        .toArray((err, result) => {
+                            if (err) {
+                                return reject(err);
+                            }
+
+                            return resolve(result);
+                        });
+                })
+                .catch((err) => {
+                    reject(err);
+                });
         });
     }
 }
