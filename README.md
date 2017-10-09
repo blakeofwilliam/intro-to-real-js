@@ -87,6 +87,9 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Intro to Promises](#intro-to-promises)
     - [Finally writing our connect function](#finally-writing-our-connect-function)
 - [Part 21: Reading data](#part-21-reading-data)
+    - [Writing the find function](#writing-the-find-function)
+    - [Implementing the find function in a route](#implementing-the-find-function-in-a-route)
+- [Part 22: Finding single documents by id](#part-22-finding-single-documents-by-id)
 
 ---
 
@@ -1833,5 +1836,5 @@ You just read data from a database with Node.js!!!
 
 ---
 
-## Finding documents by id
+## Part 22: Finding single documents by id
 Coming soon...
