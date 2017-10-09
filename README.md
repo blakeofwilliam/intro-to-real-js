@@ -1788,7 +1788,7 @@ So what this code is doing is returning a `Promise` that expects to execute the 
     - If there's no error, invoke the `resolve` function with the `result` of the search
     - Close the database connection
 
-So, this follows all of the rules of the list we wrote earlier for reading/writing/deleting database data.
+So, this follows all of the steps in the list we wrote earlier for reading/writing/deleting database data.
 
 ### Implementing the find function in a route
 Since we're going to be using our `MongoDB` class in more than one route at this point, we should do some cleanup to the `/api/database` route. In the `index.js` file, remove the `const MongoDB = require('./app/util/MongoDB');` line from the route's callback, and move it to the top of the file just after the `const express = ...` line. This will allow us to use the class in more than one route without having to `require()` it more than once.
