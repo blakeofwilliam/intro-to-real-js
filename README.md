@@ -92,6 +92,7 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
 - [Part 22: Finding single documents by id](#part-22-finding-single-documents-by-id)
     - [Creating a route for users by id](#creating-a-route-for-users-by-id)
 - [Part 23: Abstracting our routes for more collections](#part-23-abstracting-our-routes-for-more-collections)
+- [Part 24: Writing and deleting data](#part-24-writing-and-deleting-data)
 
 ---
 
@@ -1905,4 +1906,50 @@ You've just pulled a document from MongoDB by ID!!!
 ---
 
 ## Part 23: Abstracting our routes for more collections
+Now that we're able to get all users and a single user by ID, it's actually a surprisingly short journey to using this code to support **all collections** in our database.
+
+The approach that we'll take for this is to abstract the `/api/users` and `/api/users/:id` routes to **both** use dynamic path parameters for the `collection` as well. This meanse that we just need to replace `/users` with `/:collection` in both cases. Then we can rename the `users` constant in the callback function to `collection` and instantiate `MongoDB` with `request.params.collection`.
+
+After you update this in your code, the `/api/users` GET route should look like this:
+
+```javascript
+app.get('/api/:collection', (request, response) => {
+    const collection = new MongoDB(request.params.collection);
+
+    collection.find({})
+        .then((result) => {
+            response.json(result);
+        })
+        .catch((err) => {
+            response
+                .status(500)
+                .send(err.message);
+        });
+});
+```
+
+And the `/api/users/:id` GET route should look like this:
+
+```javascript
+app.get('/api/:collection/:id', (request, response) => {
+    const collection = new MongoDB(request.params.collection);
+
+    collection.findOne({ _id: ObjectID(request.params.id) })
+        .then((result) => {
+            response.json(result);
+        })
+        .catch((err) => {
+            response.status(500)
+                .send(err.message);
+        });
+});
+```
+
+That's it! Now we can request `/api/threads` and `/api/comments` and both will return an empty array (since no thread or comment documents have been added yet). Since we don't have IDs for any records in these collections yet, we'll save requesting `/api/threads/:id` and `/api/comments/:id` until we add some data.
+
+---
+
+## Part 24: Writing and deleting data
 Coming soon...
+
+---

@@ -72,28 +72,30 @@ app.get('/api/database', (request, response) => {
             response.send('Connected!');
         })
         .catch((err) => {
-            response.status(500)
+            response
+                .status(500)
                 .send(err.message);
         });
 });
 
-app.get('/api/users', (request, response) => {
-    const users = new MongoDB('users');
+app.get('/api/:collection', (request, response) => {
+    const collection = new MongoDB(request.params.collection);
 
-    users.find({})
+    collection.find({})
         .then((result) => {
             response.json(result);
         })
         .catch((err) => {
-            response.status(500)
+            response
+                .status(500)
                 .send(err.message);
         });
 });
 
-app.get('/api/users/:id', (request, response) => {
-    const users = new MongoDB('users');
+app.get('/api/:collection/:id', (request, response) => {
+    const collection = new MongoDB(request.params.collection);
 
-    users.findOne({ _id: ObjectID(request.params.id) })
+    collection.findOne({ _id: ObjectID(request.params.id) })
         .then((result) => {
             response.json(result);
         })

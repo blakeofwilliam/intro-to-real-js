@@ -13,18 +13,15 @@ class MongoDB {
         this.collection = collection;
     }
 
+    /**
+     * Connects to 
+     * 
+     * @return {Promise}
+     */
     connect() {
         const { client, url } = this;
-
-        return new Promise((resolve, reject) => {
-            client.connect(url, (err, db) => {
-                if (err) {
-                    return reject(err);
-                }
-
-                return resolve(db);
-            });
-        });
+        
+        return client.connect(url);
     }
 
     find(query) {
