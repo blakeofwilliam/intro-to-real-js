@@ -96,6 +96,7 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Writing our create function](#writing-our-create-function)
     - [Writing our update function](#writing-our-update-function)
     - [Writing our delete function](#writing-our-delete-function)
+    - [Creating routes for the rest of our CRUD](#creating-routes-for-the-rest-of-our-crud)
     - [Testing with Postman](#testing-with-postman)
 
 ---
