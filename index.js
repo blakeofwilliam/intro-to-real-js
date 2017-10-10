@@ -1,6 +1,7 @@
 // require the express package in this file 
 // and store it in a variable for later use
 const express = require('express');
+const bodyParser = require('body-parser');
 const ObjectID = require('mongodb').ObjectID;
 const MongoDB = require('./app/util/MongoDB');
 
@@ -10,6 +11,8 @@ const app = express();
 // Configure application
 app.set('views', __dirname + '/src/views');
 app.set('view engine', 'twig');
+
+app.use(bodyParser.json())
 
 const navigation = [
     {
@@ -96,6 +99,47 @@ app.get('/api/:collection/:id', (request, response) => {
     const collection = new MongoDB(request.params.collection);
 
     collection.findOne({ _id: ObjectID(request.params.id) })
+        .then((result) => {
+            response.json(result);
+        })
+        .catch((err) => {
+            response.status(500)
+                .send(err.message);
+        });
+});
+
+app.post('/api/:collection', (request, response) => {
+    const collection = new MongoDB(request.params.collection);
+    const item = request.body;
+
+    collection.create(item)
+        .then((result) => {
+            response.json(result);
+        })
+        .catch((err) => {
+            response.status(500)
+                .send(err.message);
+        });
+});
+
+app.put('/api/:collection/:id', (request, response) => {
+    const collection = new MongoDB(request.params.collection);
+    const item = request.body;
+
+    collection.update(request.params.id, item)
+        .then((result) => {
+            response.json(result);
+        })
+        .catch((err) => {
+            response.status(500)
+                .send(err.message);
+        });
+});
+
+app.delete('/api/:collection/:id', (request, response) => {
+    const collection = new MongoDB(request.params.collection);
+
+    collection.delete(request.params.id)
         .then((result) => {
             response.json(result);
         })

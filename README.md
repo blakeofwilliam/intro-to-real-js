@@ -93,6 +93,10 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Creating a route for users by id](#creating-a-route-for-users-by-id)
 - [Part 23: Abstracting our routes for more collections](#part-23-abstracting-our-routes-for-more-collections)
 - [Part 24: Writing and deleting data](#part-24-writing-and-deleting-data)
+    - [Writing our create function](#writing-our-create-function)
+    - [Writing our update function](#writing-our-update-function)
+    - [Writing our delete function](#writing-our-delete-function)
+    - [Testing with Postman](#testing-with-postman)
 
 ---
 
@@ -1949,7 +1953,62 @@ That's it! Now we can request `/api/threads` and `/api/comments` and both will r
 
 ---
 
-## Part 24: Writing and deleting data
+## Part 24: Creating, updating, and deleting data
+So, we've handled the reading of data. However, as described earlier, we want this `MongoDB` class to be responsible for all `CRUD` actions (Create, Read, Update, and Delete). So... we're missing some of those.
+
+From this point – if you survived the previous two sections – you're pretty close to home free for this section. Almost everything will look and feel close to the same for our `create(...)`, `delete(...)`, and `update(...)` functions in the `MongoDB` class. The only difference is that they will be utilizing the `insertOne(...)`, `deleteOne(...)`, and `updateOne(...)` functions made available by `db.collection(COLLECTION_NAME)`.
+
+Here are the definitions for these MongoDB functions:
+
+**insertOne(...)**: Creates a new documents on the collection instance it's called from; accepts one argument containing the object version of document being created
+
+```javascript
+insertOne(OBJECT_TO_CREATE) // Returns a Promise instance
+
+// resolve function definition
+(result) => { ... }
+
+// reject function definition
+(err) => { ... }
+```
+
+**deleteOne(...)**: Deletes a single document from the collection instance it's called from; accepts one argument containing the filters required to locate the desired document (the safest bet is to filter on `_id` since it's unique to each document)
+
+```javascript
+deleteOne(FILTERS) // Returns a Promise instance
+
+// resolve function definition
+(result) => { ... }
+
+// reject function definition
+(err) => { ... }
+```
+
+**updateOne(...)**: Updates an existing document in the collection instance it's called from; accepts two arguments: the filters requires to locate the desired document (the safest bet is to filter on `id` since it's unique to each document) and the object version of the document properties being updated and their values (if you only wanted to update the `first_name` of a user, you would just pass `{ first_name: NEW_FIRST_NAME }`)
+
+```javascript
+updateOne(FILTERS, OBJECT_TO_CREATE) // Returns a Promise instance
+
+// resolve function definition
+(result) => { ... }
+
+// reject function definition
+(err) => { ... }
+```
+
+### Writing our create function
+Coming soon...
+
+### Writing our update function
+Coming soon...
+
+### Writing our delete function
+Coming soon...
+
+### Creating routes for the rest of our CRUD
+Coming soon...
+
+### Testing with Postman
 Coming soon...
 
 ---

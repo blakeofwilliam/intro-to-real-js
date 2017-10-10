@@ -10,6 +10,7 @@
   "author": "Blake Williams <blakethewilliams@gmail.com>",
   "license": "UNLICENSED",
   "dependencies": {
+    "body-parser": "^1.18.2",
     "express": "^4.16.1",
     "mongodb": "^2.2.31",
     "nodemon": "^1.12.1",
