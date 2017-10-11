@@ -1306,7 +1306,7 @@ In a second, we'll cover some basic MongoDB concepts, however, we'll need a Mong
 Once you've installed Robo 3T, open it, and we can configure our connection to MongoDB.
 
 ### Configuring a connection in Robo 3T
-Once you open Robo 3T, you'll be prompted with a window titled `MongoDB Connections`. At the top of this window, there are a few links to perform some actions to manage your connections. Click `Create`. 
+Once you open Robo 3T, you'll be prompted with a window titled `MongoDB Connections`. At the top of this window, there are a few links to perform some actions to manage your connections. Click `Create`.
 
 For the `Name` enter `Forum Madness`; and ensure that the `Address` boxes are populated with `localhost` and `27017`. Before clicking the `Save` button on the bottom right, click the `Test` button on the bottom left. This will ensure that the connection is configured properly. You should get a little popup window that says `Connected to localhost:27017` and `Access to database is available`. Click `Close`, then click `Save`.
 
@@ -1364,9 +1364,9 @@ Alright. It's time to start writing some Javascript to connect and read from Mon
 ## Part 18: Creating our first Javascript class
 Classes are the basis of Object Oriented Programming. Much like functions, they allow you to create reusable code that can serve the purpose of driving more than one part of your application. However, unlike functions, they allow you to create a group of functions that are all registered together as a part of an `instance` of your `class`. Along side that, it allows for a built-in function that will be run any time you `initialize` an `instance` of your class. This built-in function is called the `constructor`. Any time you initialize an instance of your class, Javascript will invoke your class' `constructor` function (if one is defined).
 
-The way you define a class is pretty simple. Much like a function, it entails a keyword and a name. 
+The way you define a class is pretty simple. Much like a function, it entails a keyword and a name.
 
-Where a function definition typically look like this `function myFunction(param1, param2) {...}`; using the `function` keyword, then a name for your function, some arguments that the function accepts, and then curly brackets surrounding the code to run when your function is invoked... 
+Where a function definition typically look like this `function myFunction(param1, param2) {...}`; using the `function` keyword, then a name for your function, some arguments that the function accepts, and then curly brackets surrounding the code to run when your function is invoked...
 
 A class definition looks like this `class MyClass {...}`; using the `class` keyword, then a name for your class, and curly brackets surrounding the code that makes up your class. The class that we'll be writing first will be sort of a "utility" class for our database connection, reading of data, and writing of data. So, using what we just covered, let's start stubbing it out.
 
@@ -1385,7 +1385,7 @@ class MongoDB {
 }
 ```
 
-This is a good starting point for us to see exactly how classes get uses in Javascript, but first a quick explanation of this code. 
+This is a good starting point for us to see exactly how classes get uses in Javascript, but first a quick explanation of this code.
 
 The `mongodb` npm package, when required, `exports` (we'll get to this in a little bit, but just know that it's what is returned by the `require(...)` function) a Javascript Object. This object contains a bunch of properties that are themselves Javascript Objects which have a number of properties which are functions... One of the parent properties in the `mongodb` exported object is `MongoClient`. This is exactly what it sounds like. It's a database client for connecting and making requests to MongoDB. As mentioned before, every class has a built-in `constructor()` function that Javascript will invoke any time an instance of this class is initialized. This is the perfect time for us to do some initial setup for variables that we're going to need later on.
 
@@ -1407,7 +1407,7 @@ Save your file, and make a request to `/api/database`. It should FAIL with an er
 
 However, in node it's not enough to just write a Javascript file and `require` it. You need to explicitly tell `require` what this file `exports`. You do this by declaring – at the end of your file – `module.exports = SOMETHING_TO_EXPORT`. In this case, we want to export our MongoDB class, so we will add to the bottom of our `app/util/MongoDB.js` file `module.exports = MongoDB;` and save the file.
 
-Now when you make a request to `localhost:3000/api/database`, you should see the `OK` message. Also, in the terminal, you should see a couple of really large Javascript Objects logged. This is the result of our `console.log(...)` statements, and is just for debugging and demonstrating a key point. 
+Now when you make a request to `localhost:3000/api/database`, you should see the `OK` message. Also, in the terminal, you should see a couple of really large Javascript Objects logged. This is the result of our `console.log(...)` statements, and is just for debugging and demonstrating a key point.
 
 If you scroll up to the beginning of this long log output, you'll see `MongoDB: class MongoDB {...` this is where we're using `console.log()` to log the value stored in `const MongoDB`. As you can see, adding `module.exports = MongoDB` to our file actually allowed `require(...)` to pull in our entire class definition. That's what gets logged out when we `console.log('MongoDB: ', MongoDB);`.
 
@@ -1456,14 +1456,14 @@ class Math {
 
 As you can see, because the function now lives inside of a class, the preceding `function` keyword is no longer needed.
 
-### Instance scope 
+### Instance scope
 Earlier we covered very loosely what using the `new` keyword actually does, but this was more in general terms. Let's look at a couple more class concepts before we extend our class.
 
 Let's continue with with the Math class example just to demonstrate how both the built-in `constructor` function and our custom class functions work together to make classes incredibly robust.
 
 Traditionally, when calling a function, you can pass arguments to the function, and the function is responsible for accepting those arguments. The same is the case for classes, but the built-in `constructor` function is responsible for accepting arguments. The definition of the function is completely optional. If you do not declare a `constructor` function in your class – or if your constructor doesn't accept any arguments – any arguments that you initialize your class instances with will just be ignored.
 
-So, continuing with the `Math` example. Say the purpose of this `Math` class was to be able to create a variable for a given number that would then have the ability to run mathematical equations on itself. 
+So, continuing with the `Math` example. Say the purpose of this `Math` class was to be able to create a variable for a given number that would then have the ability to run mathematical equations on itself.
 
 An example of how we would want to use this class would be something like this:
 
@@ -2004,7 +2004,7 @@ Remembering that both **our** `connect(...)` function and mongodb's `Collection.
 
 - invoke `this.connect(...)`
 - register a resolver for the `this.connect(...)` Promise instance that accepts the `db` object
-- in the resolve function, use the `db.collection(...)` function to get a `Collection` instance for the current instance's `collection` property and invoke `insertOne(...)` with the `item` argument value recieved by the `create(...)` function you're currently writing
+- in the resolve function, use the `db.collection(...)` function to get a `Collection` instance for the current `MongoDB` instance's `collection` property and invoke `insertOne(...)` with the `item` argument value recieved by the `create(...)` function you're currently writing
 - ensure that the resolve function returns the Promise instance returned by `insertOne(...)`
 - ensure that your `create(...)` function returns the result of `this.connect(...).then(...)`
 
@@ -2033,7 +2033,7 @@ Remembering that both **our** `connect(...)` function and mongodb's `Collection.
 
 - invoke `this.connect(...)`
 - register a resolver for the `this.connect(...)` Promise instance that accepts the `db` object
-- in the resolve function, use the `db.collection(...)` function to get a `Collection` instance for the current instance's `collection` property and invoke `updateOne(...)` with the `query` and `item` argument values recieved by the `update(...)` function you're currently writing
+- in the resolve function, use the `db.collection(...)` function to get a `Collection` instance for the current `MongoDB` instance's `collection` property and invoke `updateOne(...)` with the `query` and `item` argument values recieved by the `update(...)` function you're currently writing
 - ensure that the resolve function returns the Promise instance returned by `updateOne(...)`
 - ensure that your `update(...)` function returns the result of `this.connect(...).then(...)`
 
@@ -2062,7 +2062,7 @@ Remembering that both **our** `connect(...)` function and mongodb's `Collection.
 
 - invoke `this.connect(...)`
 - register a resolver for the `this.connect(...)` Promise instance that accepts the `db` object
-- in the resolve function, use the `db.collection(...)` function to get a `Collection` instance for the current instance's `collection` property and invoke `deleteOne(...)` with the `query` argument value recieved by the `delete(...)` function you're currently writing
+- in the resolve function, use the `db.collection(...)` function to get a `Collection` instance for the current `MongoDB` instance's `collection` property and invoke `deleteOne(...)` with the `query` argument value recieved by the `delete(...)` function you're currently writing
 - ensure that the resolve function returns the Promise instance returned by `deleteOne(...)`
 - ensure that your `delete(...)` function returns the result of `this.connect(...).then(...)`
 
@@ -2087,7 +2087,7 @@ If you got anywhere close to this, incredible job! If not, no big deal. You've g
 ### Creating routes for the rest of our CRUD
 Now it's time to write some routes that will be used to some new request methods. We covered the HTTP Client/Server relationship. And in that section we discussed the concept of `Request Methods`. And we've also repeatedly demonstrated the `app.METHOD(PATH, CALLBACK)` function provided by express. In this function definition, the `METHOD` placeholder is actually just a placeholder for the `Request Method` the route should respond to. When you type in a browser's address bar and hit `enter`, by default a `GET` request is sent. Which is why we've been using the `app.get(...)` function. However, if you reference the [Request Methods](#request-methods) section from earlier, you'll see that there are a few others that we can use to support different behavior.
 
-For example, the **POST** request method is defined as `A request to submit some new data to the HTTP Server; this is most commonly used in scenarios such as form submissions`. So, this is a perfect candidate for the `Request Method` that we should use when creating documents. However, before we do this, we actually need one more project dependency, and it's called `body-parser`. 
+For example, the **POST** request method is defined as `A request to submit some new data to the HTTP Server; this is most commonly used in scenarios such as form submissions`. So, this is a perfect candidate for the `Request Method` that we should use when creating documents. However, before we do this, we actually need one more project dependency, and it's called `body-parser`.
 
 #### Body parser
 Before we explain what `body-parser` does, let's just get it installed, `required`, and implemented. Using `npm`, install and save the package `body-parser` in your project. At the top of your `index.js` file – after your `const express = ...` line, add the following:
@@ -2113,7 +2113,7 @@ So, now let's start using it!
 #### Writing our post route
 Since a `Request Method` defines how a request should be treated (whether it's a `GET`, `POST`, `PUT`, or `DELETE` request), it's actually common to see HTTP Servers support multiple `Request Methods` for a single path. Because of that fact, Express supports this behavior, and we're going to use it for exactly this purpose. Rather than having to create a separate route – like `/api/create/:collection` – to accept our **POST** request, we can actually use the same `/api/:collection` path **again**. This dramatically simplifies the process of working with our HTTP Server, since a **GET** request to `/api/threads` will be used to **retrieve** (erm... get) threads, and a **POST** request to `/api/threads` will be used to **create** threads. Pretty nice, huh?
 
-So, in your `index.js` file, after the `app.get('/api/:collection', ...)` route, we're going to add another route. This one will use `app.post('/api/:collection', ...)`. Since it's a different request method, it is completely valid to have both routes use the exact same path – for the reasons just discussed.
+So, in your `index.js` file, after the `app.get('/api/:collection', ...)` route, we're going to add another route. This one will use `app.post('/api/:collection', ...)`. Since it's a different `Request Method`, it is completely valid to have both routes use the exact same path – for the reasons just discussed.
 
 In the callback of this new route, we'll do the same `const collection` instantiation we've been doing using the `request.params.collection` path parameter. Immediately following that, though, we'll need to declare another constant called `item`. The value of this variable should be set to the value of our newly supported `request.body` (provided by `body-parser`). Since we know that this will be the Object that we want to write to the database, it's a short jump to using it as an argument in `collection.create(...)`. Invoke this function with the `item` variable as the only argument. The function returns a promise, so register a `resolve` function that accepts a single `result` argument, and uses `response.json(...)` to send the JSON representation of this result.
 
