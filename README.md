@@ -272,7 +272,7 @@ There is a pretty long list of what types of "questions" an HTTP Client can ask 
 
 **GET**: A request for the content/data at a specific web address. The HTTP Client should only _**retrieve**_ content when it receives a GET request
 
-**POST**: A request to submit some data to the HTTP Server; this is most commonly used in scenarios such as form submissions
+**POST**: A request to submit some new data to the HTTP Server; this is most commonly used in scenarios such as form submissions
 
 **PUT**: A request for the HTTP Server to update some existing data; this is also used in form submission, but when editing (rather than creating) data
 
@@ -1964,7 +1964,7 @@ Here are the definitions for these MongoDB functions:
 **insertOne(...)**: Creates a new documents on the collection instance it's called from; accepts one argument containing the object version of document being created
 
 ```javascript
-insertOne(OBJECT_TO_CREATE) // Returns a Promise instance
+Collection.insertOne(OBJECT_TO_CREATE) // Returns a Promise instance
 
 // resolve function definition
 (result) => { ... }
@@ -1976,7 +1976,7 @@ insertOne(OBJECT_TO_CREATE) // Returns a Promise instance
 **deleteOne(...)**: Deletes a single document from the collection instance it's called from; accepts one argument containing the filters required to locate the desired document (the safest bet is to filter on `_id` since it's unique to each document)
 
 ```javascript
-deleteOne(FILTERS) // Returns a Promise instance
+Collection.deleteOne(FILTERS) // Returns a Promise instance
 
 // resolve function definition
 (result) => { ... }
@@ -1988,7 +1988,7 @@ deleteOne(FILTERS) // Returns a Promise instance
 **updateOne(...)**: Updates an existing document in the collection instance it's called from; accepts two arguments: the filters requires to locate the desired document (the safest bet is to filter on `id` since it's unique to each document) and the object version of the document properties being updated and their values (if you only wanted to update the `first_name` of a user, you would just pass `{ first_name: NEW_FIRST_NAME }`)
 
 ```javascript
-updateOne(FILTERS, OBJECT_TO_CREATE) // Returns a Promise instance
+Collection.updateOne(FILTERS, OBJECT_TO_CREATE) // Returns a Promise instance
 
 // resolve function definition
 (result) => { ... }
@@ -1998,18 +1998,156 @@ updateOne(FILTERS, OBJECT_TO_CREATE) // Returns a Promise instance
 ```
 
 ### Writing our create function
-Coming soon...
+Now that we know what the `Collection.insertOne(...)` function looks like, we can start to stub out our `create(...)` class function that will use it to create new documents. In your `MongoDB.js` file, create a new function that takes a single argument called `item`. I'll explain what it should do before we write out the code. You can try on your own, then I'll cover the solution.
+
+Remembering that both **our** `connect(...)` function and mongodb's `Collection.insertOne(...)` function return a Promise instance, write the function to do the following:
+
+- invoke `this.connect(...)`
+- register a resolver for the `this.connect(...)` Promise instance that accepts the `db` object
+- in the resolve function, use the `db.collection(...)` function to get a `Collection` instance for the current instance's `collection` property and invoke `insertOne(...)` with the `item` argument value recieved by the `create(...)` function you're currently writing
+- ensure that the resolve function returns the Promise instance returned by `insertOne(...)`
+- ensure that your function returns the result of `this.connect(...).then(...)`
+
+So, that's the task. Be sure to reference your other class functions to tie together the code we've already written with the list of instructions for this new function. Have at it...
+
+Once you're done, this is what your function should look like:
+
+```javascript
+create(item) {
+    const { collection } = this;
+
+    return this.connect()
+        .then((db) => {
+            return db.collection(collection)
+                .insertOne(item);
+        });
+}
+```
+
+If you got anywhere close to this, incredible job! If not, no big deal. You've got a couple more chances to get it right. Starting with the `update(...)` function.
 
 ### Writing our update function
-Coming soon...
+Now that we know what the `Collection.updateOne(...)` function looks like, we can start to stub out our `update(...)` class function that will use it to update existing documents. In your `MongoDB.js` file, create a new function that takes two argument called `query` and `item`. I'll explain what it should do before we write out the code. You can try on your own, then I'll cover the solution.
+
+Remembering that both **our** `connect(...)` function and mongodb's `Collection.updateOne(...)` function return a Promise instance, write the function to do the following:
+
+- invoke `this.connect(...)`
+- register a resolver for the `this.connect(...)` Promise instance that accepts the `db` object
+- in the resolve function, use the `db.collection(...)` function to get a `Collection` instance for the current instance's `collection` property and invoke `updateOne(...)` with the `query` and `item` argument values recieved by the `update(...)` function you're currently writing
+- ensure that the resolve function returns the Promise instance returned by `updateOne(...)`
+- ensure that your function returns the result of `this.connect(...).then(...)`
+
+So, that's the task. Be sure to reference your other class functions to tie together the code we've already written with the list of instructions for this new function. Have at it...
+
+Once you're done, this is what your function should look like:
+
+```javascript
+update(query, item) {
+    const { collection } = this;
+
+    return this.connect()
+        .then((db) => {
+            return db.collection(collection)
+                .updateOne(query, item);
+        });
+}
+```
+
+If you got anywhere close to this, incredible job! If not, no big deal. You've got one more chances to get it right: the `delete(...)` function.
 
 ### Writing our delete function
-Coming soon...
+Now that we know what the `Collection.deleteOne(...)` function looks like, we can start to stub out our `delete(...)` class function that will use it to create new documents. In your `MongoDB.js` file, create a new function that takes a single argument called `query`. I'll explain what it should do before we write out the code. You can try on your own, then I'll cover the solution.
+
+Remembering that both **our** `connect(...)` function and mongodb's `Collection.deleteOne(...)` function return a Promise instance, write the function to do the following:
+
+- invoke `this.connect(...)`
+- register a resolver for the `this.connect(...)` Promise instance that accepts the `db` object
+- in the resolve function, use the `db.collection(...)` function to get a `Collection` instance for the current instance's `collection` property and invoke `deleteOne(...)` with the `query` argument value recieved by the `delete(...)` function you're currently writing
+- ensure that the resolve function returns the Promise instance returned by `deleteOne(...)`
+- ensure that your function returns the result of `this.connect(...).then(...)`
+
+So, that's the task. Be sure to reference your other class functions to tie together the code we've already written with the list of instructions for this new function. Have at it...
+
+Once you're done, this is what your function should look like:
+
+```javascript
+delete(query) {
+    const { collection } = this;
+
+    return this.connect()
+        .then((db) => {
+            return db.collection(collection)
+                .deleteOne(query);
+        });
+}
+```
+
+If you got anywhere close to this, incredible job! If not, no big deal. You've got a few more chances to get it right. Starting with the `update(...)` function.
 
 ### Creating routes for the rest of our CRUD
+Now it's time to write some routes that will be used to some new request methods. We covered the HTTP Client/Server relationship. And in that section we discussed the concept of `Request Methods`. And we've also repeatedly demonstrated the `app.METHOD(PATH, CALLBACK)` function provided by express. In this function definition, the `METHOD` placeholder is actually just a placeholder for the `Request Method` the route should respond to. When you type in a browser's address bar and hit `enter`, by default a `GET` request is sent. Which is why we've been using the `app.get(...)` function. However, if you reference the [Request Methods](#request-methods) section from earlier, you'll see that there are a few others that we can use to support different behavior.
+
+For example, the **POST** request method is defined as `A request to submit some new data to the HTTP Server; this is most commonly used in scenarios such as form submissions`. So, this is a perfect candidate for the `Request Method` that we should use when creating documents. However, before we do this, we actually need one more project dependency, and it's called `body-parser`. 
+
+#### Body parser
+Before we explain what `body-parser` does, let's just get it installed, `required`, and implemented. Using `npm`, install and save the package `body-parser` in your project. At the top of your `index.js` file – after your `const express = ...` line, add the following:
+
+```javascript
+const bodyParser = require('body-parser');
+```
+
+Then after your view engine `app.set(...)` calls, add this:
+
+```javascript
+app.use(bodyParser.json());
+```
+
+This simply tells your app to use `body-parser` when a request comes in. Before we can fully understand what that ends up meaning for our app, we need a little more prequisite knowledge.
+
+We just reviewed that a **POST** `Request Method` tells the HTTP Server that you want to `submit some new data to the HTTP Server`, but how does the HTTP Server know what data you're submitting? The answer is that the HTTP Protocol defines the HTTP Request in a manner that it supports another attribute – beyond just a `Request Method` – called the `Request Body`. Inside of this attribute, you can send – along with your request – the data that you want to submit. Which means, if we want to write a JSON object to the database through a **POST** request, we can just send the Object that we want to be written in the `Request Body` of that request.
+
+We'll cover how exactly to do this in a little bit, but for now all you need to know is that the `body-parser` package that we just installed, required, and implemented with `app.use(...)` reads the content of the `Request Body` and stores it on the `request` object that is passed to our route's callback. It stores this content – obviously enough – in a property called `request.body`.
+
+So, now let's start using it!
+
+#### Writing our post route
+Since a `Request Method` defines how a request should be treated (whether it's a `GET`, `POST`, `PUT`, or `DELETE` request), it's actually common to see HTTP Servers support multiple `Request Methods` for a single path. Because of that fact, Express supports this behavior, and we're going to use it for exactly this purpose. Rather than having to create a separate route – like `/api/create/:collection` – to accept our **POST** request, we can actually use the same `/api/:collection` path **again**. This dramatically simplifies the process of working with our HTTP Server, since a **GET** request to `/api/threads` will be used to **retrieve** (erm... get) threads, and a **POST** request to `/api/threads` will be used to **create** threads. Pretty nice, huh?
+
+So, in your `index.js` file, after the `app.get('/api/:collection', ...)` route, we're going to add another route. This one will use `app.post('/api/:collection', ...)`. Since it's a different request method, it is completely valid to have both routes use the exact same path – for the reasons just discussed.
+
+In the callback of this new route, we'll do the same `const collection` instantiation we've been doing using the `request.params.collection` path parameter. Immediately following that, though, we'll need to declare another constant called `item`. The value of this variable should be set to the value of our newly supported `request.body` (provided by `body-parser`). Since we know that this will be the Object that we want to write to the database, it's a short jump to using it as an argument in `collection.create(...)`. Invoke this function with the `item` variable as the only argument. The function returns a promise, so register a `resolve` function that accepts a single `result` argument, and uses `response.json(...)` to send the JSON representation of this result.
+
+Make sure you also register a `reject` function that accepts an `err` argument, sents a `500` status code on the `response` and sends `err.message`. You can reference your other routes for this portion.
+
+Once you've done all of that, your route should look something like this:
+
+```javascript
+app.post('/api/:collection', (request, response) => {
+    const collection = new MongoDB(request.params.collection);
+    const item = request.body;
+
+    collection.create(item)
+        .then((result) => {
+            response.json(result);
+        })
+        .catch((err) => {
+            response.status(500)
+                .send(err.message);
+        });
+});
+```
+
+That's it! You've just written a **POST** route that creates new documents in the database!!!
+
+#### Testing with Postman
 Coming soon...
 
-### Testing with Postman
+#### Writing our put route
 Coming soon...
+
+#### Writing our delete route
+Coming soon...
+
+
 
 ---

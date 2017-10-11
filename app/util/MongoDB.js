@@ -22,134 +22,65 @@ class MongoDB {
     connect() {
         const { client, url } = this;
         
-        return new Promise((resolve, reject) => {
-            client.connect(url, (err, db) => {
-                if (err) {
-                    return reject(err);
-                }
-
-                resolve(db);
-            });
-        });
+        return client.connect(url);
     }
 
     create(item) {
         const { collection } = this;
 
-        return new Promise((resolve, reject) => {
-            this.connect()
-                .then((db) => {
-                    db.collection(collection)
-                        .insertOne(item)
-                        .then((result) => {
-                            this.findOne({ _id: ObjectID(result.insertedId) })
-                                .then((createdItem) => {
-                                    resolve(createdItem);
-                                })
-                                .catch((err) => {
-                                    reject(err);
-                                });
-                        })
-                        .catch((err) => {
-                            reject(err);
-                        });
-                })
-                .catch((err) => {
-                    reject(err);
-                });
-        });
+        return this.connect()
+            .then((db) => {
+                return db.collection(collection)
+                    .insertOne(item);
+            })
+            .then((result) => {
+                return this.findOne({ _id: ObjectID(result.insertedId) })
+            });
     }
 
     delete(id) {
         const { collection } = this;
 
-        return new Promise((resolve, reject) => {
-            this.connect()
-                .then((db) => {
-                    db.collection(collection)
-                        .deleteOne({ _id: ObjectID(id) })
-                        .then((result) => {
-                            resolve(result);
-                        })
-                        .catch((err) => {
-                            reject(err);
-                        });
-                })
-                .catch((err) => {
-                    reject(err);
-                });
-        });
+        return this.connect()
+            .then((db) => {
+                return db.collection(collection)
+                    .deleteOne({ _id: ObjectID(id) });
+            });
     }
 
     find(query) {
         const { collection } = this;
 
-        return new Promise((resolve, reject) => {
-            this.connect()
-                .then((db) => {
-                    db.collection(collection)
-                        .find(query)
-                        .toArray((err, result) => {
-                            if (err) {
-                                return reject(err);
-                            }
-
-                            return resolve(result);
-                        });
-                })
-                .catch((err) => {
-                    reject(err);
-                });
-        });
+        return this.connect()
+            .then((db) => {
+                return db.collection(collection)
+                    .find(query)
+                    .toArray();
+            });
     }
 
     findOne(query) {
         const { collection } = this;
 
-        return new Promise((resolve, reject) => {
-            this.connect()
-                .then((db) => {
-                    db.collection(collection)
-                        .findOne(query, (err, result) => {
-                            if (err) {
-                                return reject(err);
-                            }
-
-                            return resolve(result);
-                        });
-                })
-                .catch((err) => {
-                    reject(err);
-                });
-        });
+        return this.connect()
+            .then((db) => {
+                return db.collection(collection)
+                    .findOne(query);
+            });
     }
 
     update(id, item) {
         const { collection } = this;
         const query = { _id: ObjectID(id) };
 
-        return new Promise((resolve, reject) => {
-            this.connect()
-                .then((db) => {
-                    db.collection(collection)
-                        .updateOne(query, item)
-                        .then((result) => {
-                            this.findOne(query)
-                                .then((result) => {
-                                    resolve(result);
-                                })
-                                .catch((err) => {
-                                    reject(err);
-                                });
-                        })
-                        .catch((err) => {
-                            reject(err);
-                        });
-                })
-                .catch((err) => {
-                    reject(err);
-                });
-        });
+        return this.connect()
+            .then((db) => {
+                return db.collection(collection)
+                    .updateOne(query, item);
+            })
+            .then((result) => {
+                return this.findOne(query)
+            });
     }
 }
 
