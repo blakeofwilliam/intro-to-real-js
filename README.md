@@ -2006,7 +2006,7 @@ Remembering that both **our** `connect(...)` function and mongodb's `Collection.
 - register a resolver for the `this.connect(...)` Promise instance that accepts the `db` object
 - in the resolve function, use the `db.collection(...)` function to get a `Collection` instance for the current instance's `collection` property and invoke `insertOne(...)` with the `item` argument value recieved by the `create(...)` function you're currently writing
 - ensure that the resolve function returns the Promise instance returned by `insertOne(...)`
-- ensure that your function returns the result of `this.connect(...).then(...)`
+- ensure that your `create(...)` function returns the result of `this.connect(...).then(...)`
 
 So, that's the task. Be sure to reference your other class functions to tie together the code we've already written with the list of instructions for this new function. Have at it...
 
@@ -2035,7 +2035,7 @@ Remembering that both **our** `connect(...)` function and mongodb's `Collection.
 - register a resolver for the `this.connect(...)` Promise instance that accepts the `db` object
 - in the resolve function, use the `db.collection(...)` function to get a `Collection` instance for the current instance's `collection` property and invoke `updateOne(...)` with the `query` and `item` argument values recieved by the `update(...)` function you're currently writing
 - ensure that the resolve function returns the Promise instance returned by `updateOne(...)`
-- ensure that your function returns the result of `this.connect(...).then(...)`
+- ensure that your `update(...)` function returns the result of `this.connect(...).then(...)`
 
 So, that's the task. Be sure to reference your other class functions to tie together the code we've already written with the list of instructions for this new function. Have at it...
 
@@ -2064,7 +2064,7 @@ Remembering that both **our** `connect(...)` function and mongodb's `Collection.
 - register a resolver for the `this.connect(...)` Promise instance that accepts the `db` object
 - in the resolve function, use the `db.collection(...)` function to get a `Collection` instance for the current instance's `collection` property and invoke `deleteOne(...)` with the `query` argument value recieved by the `delete(...)` function you're currently writing
 - ensure that the resolve function returns the Promise instance returned by `deleteOne(...)`
-- ensure that your function returns the result of `this.connect(...).then(...)`
+- ensure that your `delete(...)` function returns the result of `this.connect(...).then(...)`
 
 So, that's the task. Be sure to reference your other class functions to tie together the code we've already written with the list of instructions for this new function. Have at it...
 
