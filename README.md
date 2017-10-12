@@ -97,7 +97,7 @@ This is a basic project to demonstrate a more common real-world workflow for Jav
     - [Writing our update function](#writing-our-update-function)
     - [Writing our delete function](#writing-our-delete-function)
     - [Creating routes for the rest of our CRUD](#creating-routes-for-the-rest-of-our-crud)
-    - [Testing with Postman](#testing-with-postman)
+- [Part 25: Procedural Promises](#procedural-promises)
 
 ---
 
@@ -2174,3 +2174,6 @@ With that in mind, create a new **DELETE** route for the `/api/:collection/:id` 
 Have at it!
 
 ---
+
+## Part 25: Procedural Promises
+Coming soon...
