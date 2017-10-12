@@ -2117,9 +2117,9 @@ So, in your `index.js` file, after the `app.get('/api/:collection', ...)` route,
 
 In the callback of this new route, we'll do the same `const collection` instantiation we've been doing using the `request.params.collection` path parameter. Immediately following that, though, we'll need to declare another constant called `item`. The value of this variable should be set to the value of our newly supported `request.body` (provided by `body-parser`). Since we know that this will be the Object that we want to write to the database, it's a short jump to using it as an argument in `collection.create(...)`. Invoke this function with the `item` variable as the only argument. The function returns a promise, so register a `resolve` function that accepts a single `result` argument, and uses `response.json(...)` to send the JSON representation of this result.
 
-Make sure you also register a `reject` function that accepts an `err` argument, sents a `500` status code on the `response` and sends `err.message`. You can reference your other routes for this portion.
+Make sure you also register a `reject` function that accepts an `err` argument, sets a `500` status code on the `response` object, and sends `err.message`. You can reference your other routes for this portion.
 
-Once you've done all of that, your route should look something like this:
+Try it on your own, and once you've done all of that, your route should look something like this:
 
 ```javascript
 app.post('/api/:collection', (request, response) => {
@@ -2139,15 +2139,38 @@ app.post('/api/:collection', (request, response) => {
 
 That's it! You've just written a **POST** route that creates new documents in the database!!!
 
-#### Testing with Postman
-Coming soon...
-
 #### Writing our put route
-Coming soon...
+The same exact principles apply for our **PUT** route. We'll be using this request method to update existing data. For that reason, we'll be using the `/api/:collection/:id` path. This will allow us to target a specific user and use our `collection.update(...)` function to update this user.
+
+In your `index.js` file, after the **POST** route you just wrote, add an `app.put('/api/:collection/:id', ...)` route. In the callback of this new route, we'll need the same `const collection` instantiation we've been doing using the `requet.params.collection` path parameter. Immediately following that, we'll again need to declare an `item` constant that is set to the value of `request.body`. We'll also need a `query` constant with a single `_id` property with the value of `ObjectID(request.params.id)`. This should be all we need to invoke our `collection.update(...)` function.
+
+Be sure to register a `resolve` function for the resulting Promise that uses `response.json(...)` to send the JSON representation of the final result of `collection.update(...)`.
+
+Make sure you also register a `reject` function that accepts an `err` argument, sets `500` status code on the `response` object, and sends `err.message`. You can reference your other routes for this portion.
+
+Try it on your own, and once you've done all of that, your route should look something like this:
+
+```javascript
+app.put('/api/:collection/:id', (request, response) => {
+    const collection = new MongoDB(request.params.collection);
+    const item = request.body;
+
+    collection.update(request.params.id, item)
+        .then((result) => {
+            response.json(result);
+        })
+        .catch((err) => {
+            response.status(500)
+                .send(err.message);
+        });
+});
+```
 
 #### Writing our delete route
-Coming soon...
+We'll end this section with an easy one. I'll preface this by clarifying that while **POST** and **PUT** very often implement a `Request Body`, it's not typically considered standard procedure to do so when sending a **DELETE** request. For this reason, we won't be using a request body. However, we will be using – yet again – the `/api/:collection/:id` path. This one, you're going to do all on your own. I'm not even going to give you the answer this time. Remember that the convention for Express app request functions are `app.METHOD(PATH, CALLBACK)` (although the `METHOD` name is lower-case). 
 
+With that in mind, create a new **DELETE** route for the `/api/:collection/:id` path that instantiates `MongoDB` with the `collection` path parameter, creates a query object using the `id` path parameter, and invokes the `collection.delete(...)` function. The same rules apply as before in terms of the `resolve` and `reject` behavior (send a JSON response when successful, send a 500 and error message if it fails).
 
+Have at it!
 
 ---
