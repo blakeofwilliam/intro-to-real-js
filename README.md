@@ -1702,6 +1702,12 @@ return new Promise((resolve, reject) => {
 
 That's it for the `connect()` function. Let's use it in our `/api/database` route to see how it looks in action.
 
+**EDIT:** The `MongoClient.connect(...)` function actually returns its own Promise instance if no callback is provided, so this function can actually be updated to simply:
+
+```javascript
+return this.client.connect(this.url);
+```
+
 In the `index.js` file, inside of your `/api/database` GET route, replace the `response.send('OK');` line with the following code:
 
 ```javascript
@@ -1801,6 +1807,19 @@ So what this code is doing is returning a `Promise` that expects to execute the 
     - If there's no error, invoke the `resolve` function with the `result` of the search
     - Close the database connection
 
+**EDIT**: The `.toArray(...)` function actually returns its own Promise if no callback is provided, so this function can actually be updated to:
+
+```javascript
+const { collection } = this;
+
+return this.connect()
+    .then((db) => {
+        return db.collection(collection)
+            .find(query)
+            .toArray();
+    });
+```
+
 So, this follows all of the steps in the list we wrote earlier for reading/writing/deleting database data.
 
 ### Implementing the find function in a route
@@ -1875,6 +1894,18 @@ findOne(query) {
 ```
 
 This function is almost identical to the previous `find(...)` function we wrote, except it uses the `findOne()` function, and so it doesn't require the use of `toArray(...)`. Out side of that, it's pretty much the same thing. That was easy!
+
+**EDIT**: The `.findOne(...)` function actually returns its own Promise instance if no callback is provided, so this function can be updated to:
+
+```javascript
+const { collection } = this;
+
+return this.connect()
+    .then((db) => {
+        return db.collection(collection)
+            .findOne(query);
+    });
+```
 
 ### Creating a route for users by id
 Now that we have a `findOne(...)` function in our `MongoDB` class, we can create a dynamic route for the `/api/users/:id`. We will then pass a `query` object to our new `findOne(...)` function that simply filters by the `:id` request parameter. However, in the MongoDB database, IDs are actually stored as a special type called an `ObjectID`. So, we'll need to provide and instance of an `ObjectID` in our `query` object. First, let's require that from the `mongodb` dependency.
