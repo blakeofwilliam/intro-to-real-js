@@ -126,7 +126,7 @@ app.put('/api/:collection/:id', (request, response) => {
     const collection = new MongoDB(request.params.collection);
     const item = request.body;
 
-    collection.update(request.params.id, item)
+    collection.update({ _id: ObjectID(request.params.id) }, item)
         .then((result) => {
             response.json(result);
         })
@@ -139,7 +139,7 @@ app.put('/api/:collection/:id', (request, response) => {
 app.delete('/api/:collection/:id', (request, response) => {
     const collection = new MongoDB(request.params.collection);
 
-    collection.delete(request.params.id)
+    collection.delete({ _id: ObjectID(request.params.id) })
         .then((result) => {
             response.json(result);
         })

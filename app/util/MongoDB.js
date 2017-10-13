@@ -61,15 +61,16 @@ class MongoDB {
      * Connects to mongodb, and deletes the document
      * belonging to the provided `id`.
      *
-     * @param {string} id
+     * @param {Object} query
      * @return {Promise}
      */
-    delete(id) {
+    delete(query) {
         const { collection } = this;
 
         return this.connect()
             .then((db) => {
-                return db.collection(collection).deleteOne({ _id: ObjectID(id) });
+                return db.collection(collection)
+                    .deleteOne(query);
             });
     }
 
@@ -114,13 +115,12 @@ class MongoDB {
      * document for the passed `id`, then updates the
      * document with the `item` Object.
      *
-     * @param {string} id
+     * @param {Object} id
      * @param {Object} item
      * @param {Promise}
      */
-    update(id, item) {
+    update(query, item) {
         const { collection } = this;
-        const query = { _id: ObjectID(id) };
 
         return this.connect()
             .then((db) => {
