@@ -49,12 +49,8 @@ class MongoDB {
         const { collection } = this;
 
         return this.connect()
-            .then((db) => {
-                return db.collection(collection).insertOne(item);
-            })
-            .then((result) => {
-                return this.findOne({ _id: ObjectID(result.insertedId) });
-            });
+            .then(db => db.collection(collection).insertOne(item))
+            .then(result => this.findOne({ _id: ObjectID(result.insertedId) }));
     }
 
     /**
@@ -68,10 +64,7 @@ class MongoDB {
         const { collection } = this;
 
         return this.connect()
-            .then((db) => {
-                return db.collection(collection)
-                    .deleteOne(query);
-            });
+            .then(db => db.collection(collection).deleteOne(query));
     }
 
     /**
@@ -86,11 +79,7 @@ class MongoDB {
         const { collection } = this;
 
         return this.connect()
-            .then((db) => {
-                return db.collection(collection)
-                    .find(query)
-                    .toArray();
-            });
+            .then(db => db.collection(collection).find(query).toArray());
     }
 
     /**
@@ -104,10 +93,7 @@ class MongoDB {
         const { collection } = this;
 
         return this.connect()
-            .then((db) => {
-                return db.collection(collection)
-                    .findOne(query);
-            });
+            .then(db => db.collection(collection).findOne(query));
     }
 
     /**
@@ -123,13 +109,8 @@ class MongoDB {
         const { collection } = this;
 
         return this.connect()
-            .then((db) => {
-                return db.collection(collection)
-                    .updateOne(query, item);
-            })
-            .then((result) => {
-                return this.findOne(query)
-            });
+            .then(db => db.collection(collection).updateOne(query, item))
+            .then(result => this.findOne(query));
     }
 }
 

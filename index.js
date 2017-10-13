@@ -71,41 +71,24 @@ app.get('/api/database', (request, response) => {
     const db = new MongoDB();
 
     db.connect()
-        .then((db) => {
-            response.send('Connected!');
-        })
-        .catch((err) => {
-            response
-                .status(500)
-                .send(err.message);
-        });
+        .then(db => response.send('Connected!'))
+        .catch(err => response.status(500).send(err.message));
 });
 
 app.get('/api/:collection', (request, response) => {
     const collection = new MongoDB(request.params.collection);
 
     collection.find({})
-        .then((result) => {
-            response.json(result);
-        })
-        .catch((err) => {
-            response
-                .status(500)
-                .send(err.message);
-        });
+        .then(result => response.json(result))
+        .catch(err => response.status(500).send(err.message));
 });
 
 app.get('/api/:collection/:id', (request, response) => {
     const collection = new MongoDB(request.params.collection);
 
     collection.findOne({ _id: ObjectID(request.params.id) })
-        .then((result) => {
-            response.json(result);
-        })
-        .catch((err) => {
-            response.status(500)
-                .send(err.message);
-        });
+        .then(result => response.json(result))
+        .catch(err => response.status(500).send(err.message));
 });
 
 app.post('/api/:collection', (request, response) => {
@@ -113,13 +96,8 @@ app.post('/api/:collection', (request, response) => {
     const item = request.body;
 
     collection.create(item)
-        .then((result) => {
-            response.json(result);
-        })
-        .catch((err) => {
-            response.status(500)
-                .send(err.message);
-        });
+        .then(result => response.json(result))
+        .catch(err => response.status(500).send(err.message));
 });
 
 app.put('/api/:collection/:id', (request, response) => {
@@ -127,26 +105,16 @@ app.put('/api/:collection/:id', (request, response) => {
     const item = request.body;
 
     collection.update({ _id: ObjectID(request.params.id) }, item)
-        .then((result) => {
-            response.json(result);
-        })
-        .catch((err) => {
-            response.status(500)
-                .send(err.message);
-        });
+        .then(result => response.json(result))
+        .catch(err => response.status(500).send(err.message));
 });
 
 app.delete('/api/:collection/:id', (request, response) => {
     const collection = new MongoDB(request.params.collection);
 
     collection.delete({ _id: ObjectID(request.params.id) })
-        .then((result) => {
-            response.json(result);
-        })
-        .catch((err) => {
-            response.status(500)
-                .send(err.message);
-        });
+        .then(result => response.json(result))
+        .catch(err => response.status(500).send(err.message));
 });
 
 app.use('/assets', express.static('src'));
